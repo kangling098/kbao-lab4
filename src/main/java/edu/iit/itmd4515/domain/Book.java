@@ -1,8 +1,10 @@
-package edu.iit.itmd4515;
+package edu.iit.itmd4515.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,10 +32,7 @@ public class Book {
     @Column(nullable = false, unique = true, length = 13)
     private String isbn;
     
-    @NotBlank(message = "Publisher is required")
-    @Size(max = 100, message = "Publisher must not exceed 100 characters")
-    @Column(nullable = false, length = 100)
-    private String publisher;
+    
     
     @PastOrPresent(message = "Publication date must be in the past or present")
     @Column(name = "publication_date")
@@ -56,15 +55,63 @@ public class Book {
     @Column(name = "due_date")
     private LocalDate dueDate;
     
+    // Relationships
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publisher_id")
+    private Publisher publisher;
+    
+    @ManyToMany
+    @JoinTable(
+        name = "book_authors",
+        joinColumns = @JoinColumn(name = "book_id"),
+        inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private List<Author> authors = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookLoan> bookLoans = new ArrayList<>();
+    
     // Constructors
     public Book() {
     }
     
-    public Book(String title, String author, String isbn, String publisher) {
+    public Book(String title, String author, String isbn) {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
-        this.publisher = publisher;
+    }
+    
+    // Helper methods for relationships
+    public void addAuthor(Author author) {
+        if (!this.authors.contains(author)) {
+            this.authors.add(author);
+            if (!author.getBooks().contains(this)) {
+                author.getBooks().add(this);
+            }
+        }
+    }
+    
+    public void removeAuthor(Author author) {
+        if (this.authors.contains(author)) {
+            this.authors.remove(author);
+            if (author.getBooks().contains(this)) {
+                author.getBooks().remove(this);
+            }
+        }
+    }
+    
+    public void addBookLoan(BookLoan bookLoan) {
+        if (!this.bookLoans.contains(bookLoan)) {
+            this.bookLoans.add(bookLoan);
+            bookLoan.setBook(this);
+        }
+    }
+    
+    public void removeBookLoan(BookLoan bookLoan) {
+        if (this.bookLoans.contains(bookLoan)) {
+            this.bookLoans.remove(bookLoan);
+            bookLoan.setBook(null);
+        }
     }
     
     // Getters and Setters
@@ -100,13 +147,7 @@ public class Book {
         this.isbn = isbn;
     }
     
-    public String getPublisher() {
-        return publisher;
-    }
     
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
-    }
     
     public LocalDate getPublicationDate() {
         return publicationDate;
@@ -148,6 +189,30 @@ public class Book {
         this.dueDate = dueDate;
     }
     
+    public Publisher getPublisher() {
+        return publisher;
+    }
+    
+    public void setPublisher(Publisher publisher) {
+        this.publisher = publisher;
+    }
+    
+    public List<Author> getAuthors() {
+        return authors;
+    }
+    
+    public void setAuthors(List<Author> authors) {
+        this.authors = authors;
+    }
+    
+    public List<BookLoan> getBookLoans() {
+        return bookLoans;
+    }
+    
+    public void setBookLoans(List<BookLoan> bookLoans) {
+        this.bookLoans = bookLoans;
+    }
+    
     // equals and hashCode based on business key (ISBN)
     @Override
     public boolean equals(Object o) {
@@ -170,7 +235,7 @@ public class Book {
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", isbn='" + isbn + '\'' +
-                ", publisher='" + publisher + '\'' +
+                ", publisher='" + (publisher != null ? publisher.getName() : "null") + '\'' +
                 ", publicationDate=" + publicationDate +
                 ", pageCount=" + pageCount +
                 ", price=" + price +

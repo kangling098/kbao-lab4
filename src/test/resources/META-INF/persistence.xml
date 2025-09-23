@@ -4,26 +4,7 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
              https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
     
-    <!-- JTA Persistence Unit for Web Application -->
-    <persistence-unit name="itmd4515PU" transaction-type="JTA">
-        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <jta-data-source>java:app/jdbc/itmd4515DS</jta-data-source>
-        <class>edu.iit.itmd4515.domain.Book</class>
-        <class>edu.iit.itmd4515.domain.Author</class>
-        <class>edu.iit.itmd4515.domain.Publisher</class>
-        <class>edu.iit.itmd4515.domain.Library</class>
-        <class>edu.iit.itmd4515.domain.BookLoan</class>
-        <properties>
-            <!-- EclipseLink properties -->
-            <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
-            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
-            <property name="eclipselink.logging.level" value="INFO"/>
-            <property name="eclipselink.logging.parameters" value="true"/>
-        </properties>
-    </persistence-unit>
-    
-    <!-- RESOURCE_LOCAL Persistence Unit for Standalone Execution -->
-    <persistence-unit name="itmd4515StandalonePU" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="itmd4515testPU" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>edu.iit.itmd4515.domain.Book</class>
         <class>edu.iit.itmd4515.domain.Author</class>
@@ -31,7 +12,6 @@
         <class>edu.iit.itmd4515.domain.Library</class>
         <class>edu.iit.itmd4515.domain.BookLoan</class>
         <properties>
-            <!-- Database connection properties -->
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/itmd4515?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true"/>
             <property name="jakarta.persistence.jdbc.user" value="itmd4515"/>
@@ -40,7 +20,7 @@
             <!-- EclipseLink properties -->
             <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
-            <property name="eclipselink.logging.level" value="INFO"/>
+            <property name="eclipselink.logging.level" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
         </properties>
     </persistence-unit>

@@ -1,5 +1,6 @@
 package edu.iit.itmd4515;
 
+import edu.iit.itmd4515.domain.Book;
 import jakarta.persistence.*;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,7 +51,7 @@ public class BookTest {
     public void testCreateBook() {
         LOG.info("Testing Create Book operation...");
         
-        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884", "Prentice Hall");
+        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884");
         book.setPublicationDate(LocalDate.of(2008, 8, 1));
         book.setPageCount(464);
         book.setPrice(42.50);
@@ -76,7 +77,7 @@ public class BookTest {
         LOG.info("Testing Read Book operation...");
         
         // First create a book to read
-        Book book = new Book("Design Patterns", "Gang of Four", "9780201633610", "Addison-Wesley");
+        Book book = new Book("Design Patterns", "Gang of Four", "9780201633610");
         book.setPublicationDate(LocalDate.of(1994, 10, 31));
         book.setPageCount(395);
         book.setPrice(54.99);
@@ -105,7 +106,7 @@ public class BookTest {
         LOG.info("Testing Update Book operation...");
         
         // Create a book first
-        Book book = new Book("Refactoring", "Martin Fowler", "9780201485677", "Addison-Wesley");
+        Book book = new Book("Refactoring", "Martin Fowler", "9780201485677");
         book.setPublicationDate(LocalDate.of(1999, 7, 8));
         book.setPageCount(464);
         book.setPrice(44.99);
@@ -142,7 +143,7 @@ public class BookTest {
         LOG.info("Testing Delete Book operation...");
         
         // Create a book to delete
-        Book book = new Book("The Pragmatic Programmer", "Andrew Hunt", "9780201616224", "Addison-Wesley");
+        Book book = new Book("The Pragmatic Programmer", "Andrew Hunt", "9780201616224");
         book.setPublicationDate(LocalDate.of(1999, 10, 30));
         book.setPageCount(352);
         book.setPrice(42.95);
@@ -173,9 +174,9 @@ public class BookTest {
         LOG.info("Testing Find All Books operation...");
         
         // Create some test books
-        Book book1 = new Book("Book 1", "Author 1", "1111111111", "Publisher 1");
-        Book book2 = new Book("Book 2", "Author 2", "2222222222", "Publisher 2");
-        Book book3 = new Book("Book 3", "Author 3", "3333333333", "Publisher 3");
+        Book book1 = new Book("Book 1", "Author 1", "1111111111");
+        Book book2 = new Book("Book 2", "Author 2", "2222222222");
+        Book book3 = new Book("Book 3", "Author 3", "3333333333");
         
         tx.begin();
         em.persist(book1);
@@ -200,7 +201,7 @@ public class BookTest {
         LOG.info("Testing Find Book by ISBN operation...");
         
         String isbn = "1234567890";
-        Book book = new Book("Test Book", "Test Author", isbn, "Test Publisher");
+        Book book = new Book("Test Book", "Test Author", isbn);
         
         tx.begin();
         em.persist(book);

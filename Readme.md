@@ -1,5 +1,22 @@
-# Lab 4 - ORM and JPA
-kbao2 lab 4 README
+# Lab 5 - JPA Relationships
+kbao2 lab 5 README - JPA Relationships Implementation
+
+## 🎯 Lab 5 Overview
+
+This project has been enhanced from Lab 4 to implement **JPA Relationships** as required by Lab 5. The implementation includes:
+
+- ✅ **DataSourceDefinition** annotation for JNDI data source configuration
+- ✅ **Dual Persistence Units**: JTA for web apps, RESOURCE_LOCAL for testing
+- ✅ **5 Total Entities** (exceeds minimum requirement of 4)
+- ✅ **6 JPA Relationships** including bidirectional relationships
+- ✅ **Comprehensive relationship helper methods**
+- ✅ **Main class for NetBeans execution**
+
+## 📋 Business Domain Description
+
+I have chosen a **Library Management System** as my business domain for this semester project. This domain is particularly engaging because it involves real-world entities that most people can relate to - books, authors, publishers, and library operations. The library system provides a rich environment for learning JPA and ORM concepts while building something practical and useful.
+
+A library management system handles the core operations of tracking books, managing checkouts, handling member registrations, and maintaining inventory. This domain offers excellent opportunities to explore various JPA relationships including one-to-many (library has many books), many-to-many (books can have multiple authors, members can borrow multiple books), and complex temporal relationships (due dates, borrowing history).
 
 ## Business Domain Description
 
@@ -46,6 +63,77 @@ While Lab 4 focuses on the Book entity, the complete library system would includ
 - **LibraryBranch** ↔ **BookCopy** (One-to-Many): Each branch has multiple book copies
 
 This design allows for complex queries such as finding all books by a specific author, tracking member borrowing history, identifying overdue books, and managing inventory across multiple library branches.
+
+## ✅ Lab 5 Entity Implementation
+
+**Lab 5 has successfully implemented the complete entity system!** Here are the 5 entities created:
+
+### 1. **Book** (Enhanced from Lab 4)
+- **Enhanced with relationships**: ManyToOne with Publisher, ManyToMany with Author, OneToMany with BookLoan
+- **Fields**: title, author, isbn, publicationDate, pageCount, price, isAvailable, dueDate
+- **Relationships**: Publisher (ManyToOne), Authors (ManyToMany), BookLoans (OneToMany)
+
+### 2. **Author** (New)
+- **Purpose**: Represents book authors with biographical information
+- **Fields**: firstName, lastName, birthDate, email, biography, nationality
+- **Relationships**: Books (ManyToMany)
+
+### 3. **Publisher** (New)
+- **Purpose**: Represents publishing companies
+- **Fields**: name, address, city, country, phoneNumber, email, foundedDate, description, active
+- **Relationships**: Books (OneToMany)
+
+### 4. **Library** (New)
+- **Purpose**: Represents physical library branches
+- **Fields**: name, address, city, state, zipCode, phoneNumber, email, openingTime, closingTime, capacity, active
+- **Relationships**: BookLoans (OneToMany)
+
+### 5. **BookLoan** (New)
+- **Purpose**: Tracks book borrowing transactions
+- **Fields**: loanDate, dueDate, returnDate, borrowerName, borrowerEmail, borrowerPhone, fineAmount, notes
+- **Relationships**: Book (ManyToOne), Library (ManyToOne)
+
+## 🔗 JPA Relationships Implemented
+
+### **Unidirectional Relationships:**
+1. **Book → Publisher** (ManyToOne): Each book has one publisher
+
+### **Bidirectional Relationships:**
+1. **Book ↔ Author** (ManyToMany): Books can have multiple authors, authors can write multiple books
+2. **Publisher ↔ Book** (OneToMany): Publishers publish many books, each book belongs to one publisher
+3. **Library ↔ BookLoan** (OneToMany): Libraries have many loans, each loan belongs to one library
+4. **Book ↔ BookLoan** (OneToMany): Books can have multiple loans, each loan is for one book
+
+## 🛠️ Technical Implementation
+
+### **DataSource Configuration**
+```java
+@DataSourceDefinition(
+    name = "java:app/jdbc/itmd4515DS",
+    className = "com.mysql.cj.jdbc.MysqlDataSource",
+    portNumber = 3306,
+    serverName = "localhost",
+    databaseName = "itmd4515",
+    user = "itmd4515",
+    password = "itmd4515",
+    properties = {
+        "zeroDateTimeBehavior=CONVERT_TO_NULL",
+        "serverTimezone=America/Chicago",
+        "useSSL=false"
+    }
+)
+```
+
+### **Dual Persistence Units**
+- **itmd4515PU**: JTA persistence unit for web applications using JNDI data source
+- **itmd4515StandalonePU**: RESOURCE_LOCAL persistence unit for standalone execution
+
+### **Relationship Helper Methods**
+All bidirectional relationships include proper helper methods to maintain synchronization:
+- `Book.addAuthor()` / `Book.removeAuthor()`
+- `Publisher.addBook()` / `Publisher.removeBook()`
+- `Library.addBookLoan()` / `Library.removeBookLoan()`
+- `Book.addBookLoan()` / `Book.removeBookLoan()`
 
 ## Test Results
 
@@ -114,6 +202,55 @@ This design allows for complex queries such as finding all books by a specific a
 [INFO] Finished at: 2025-09-16T15:36:49+08:00
 [INFO] ------------------------------------------------------------------------
 ```
+
+## 🚀 Lab 5 Main Class Execution
+
+### **NetBeans Execution**
+The project now includes a **Main.java** class that demonstrates all JPA relationships:
+
+```
+Starting JPA Lab 5 - Relationships Demo
+=== DEMONSTRATION RESULTS ===
+
+--- Book: JPA Relationships Guide ---
+ISBN: 9781234567890
+Author: John Doe
+Publisher: Demo Publisher
+Authors count: 2
+  - John Doe
+  - Jane Smith
+Book loans count: 1
+
+--- Publisher: Demo Publisher ---
+Books published: 1
+  - JPA Relationships Guide
+
+--- Library: Demo Library ---
+Location: Chicago, IL
+Book loans: 1
+  - JPA Relationships Guide by Student Name (Due: 2025-10-07)
+
+=== RELATIONSHIPS DEMONSTRATION COMPLETE ===
+JPA Lab 5 - Relationships Demo completed successfully!
+```
+
+### **How to Run in NetBeans**
+1. **Right-click on the project** in NetBeans
+2. **Select "Run"** or **"Clean and Build"** then "Run"
+3. **NetBeans will automatically find and execute the Main class**
+4. **View the console output** to see the relationships demonstration
+
+### **Relationship Test Results**
+```
+[INFO] Running edu.iit.itmd4515.RelationshipTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.725 s
+```
+
+**Test Coverage:**
+- ✅ Unidirectional ManyToOne (Book → Publisher)
+- ✅ Bidirectional ManyToMany (Book ↔ Author)
+- ✅ Bidirectional OneToMany (Publisher ↔ Book)
+- ✅ Bidirectional OneToMany (Library ↔ BookLoan)
 
 ### Test Analysis
 

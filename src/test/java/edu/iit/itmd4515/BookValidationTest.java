@@ -1,5 +1,6 @@
 package edu.iit.itmd4515;
 
+import edu.iit.itmd4515.domain.Book;
 import jakarta.validation.*;
 import org.junit.jupiter.api.*;
 import java.time.LocalDate;
@@ -27,7 +28,7 @@ public class BookValidationTest {
     @Test
     @DisplayName("Test Valid Book - Sunny Day")
     public void testValidBook() {
-        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884", "Prentice Hall");
+        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884");
         book.setPublicationDate(LocalDate.of(2008, 8, 1));
         book.setPageCount(464);
         book.setPrice(42.50);
@@ -40,7 +41,7 @@ public class BookValidationTest {
     @Test
     @DisplayName("Test Empty Title - Rainy Day")
     public void testEmptyTitle() {
-        Book book = new Book("", "Robert C. Martin", "9780132350884", "Prentice Hall");
+        Book book = new Book("", "Robert C. Martin", "9780132350884");
         
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertFalse(violations.isEmpty(), "Book with empty title should have violations");
@@ -54,7 +55,7 @@ public class BookValidationTest {
     @Test
     @DisplayName("Test Invalid ISBN Format - Rainy Day")
     public void testInvalidIsbnFormat() {
-        Book book = new Book("Clean Code", "Robert C. Martin", "INVALID123", "Prentice Hall");
+        Book book = new Book("Clean Code", "Robert C. Martin", "INVALID123");
         
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertFalse(violations.isEmpty(), "Book with invalid ISBN should have violations");
@@ -68,7 +69,7 @@ public class BookValidationTest {
     @Test
     @DisplayName("Test Negative Page Count - Rainy Day")
     public void testNegativePageCount() {
-        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884", "Prentice Hall");
+        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884");
         book.setPageCount(-100);
         
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
@@ -83,7 +84,7 @@ public class BookValidationTest {
     @Test
     @DisplayName("Test Future Publication Date - Rainy Day")
     public void testFuturePublicationDate() {
-        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884", "Prentice Hall");
+        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884");
         book.setPublicationDate(LocalDate.now().plusDays(30)); // Future date
         
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
@@ -98,7 +99,7 @@ public class BookValidationTest {
     @Test
     @DisplayName("Test Zero Price - Rainy Day")
     public void testZeroPrice() {
-        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884", "Prentice Hall");
+        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884");
         book.setPrice(0.0);
         
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
@@ -114,7 +115,7 @@ public class BookValidationTest {
     @DisplayName("Test Title Too Long - Rainy Day")
     public void testTitleTooLong() {
         String longTitle = "A".repeat(250); // Title longer than 200 characters
-        Book book = new Book(longTitle, "Robert C. Martin", "9780132350884", "Prentice Hall");
+        Book book = new Book(longTitle, "Robert C. Martin", "9780132350884");
         
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertFalse(violations.isEmpty(), "Book with too long title should have violations");
@@ -128,7 +129,7 @@ public class BookValidationTest {
     @Test
     @DisplayName("Test Null Availability - Rainy Day")
     public void testNullAvailability() {
-        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884", "Prentice Hall");
+        Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884");
         book.setIsAvailable(null);
         
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
@@ -143,7 +144,7 @@ public class BookValidationTest {
     @Test
     @DisplayName("Test Multiple Violations - Rainy Day")
     public void testMultipleViolations() {
-        Book book = new Book("", "", "INVALID", "");
+        Book book = new Book("", "", "INVALID");
         book.setPageCount(-50);
         book.setPrice(-10.0);
         book.setPublicationDate(LocalDate.now().plusDays(30));
