@@ -58,6 +58,14 @@ public class BookLoan {
     @JoinColumn(name = "library_id", nullable = false)
     private Library library;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "borrower_id", nullable = false)
+    private Borrower borrower;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "processed_by_id")
+    private Librarian processedBy;
+    
     // Constructors
     public BookLoan() {
     }
@@ -66,6 +74,15 @@ public class BookLoan {
         this.loanDate = loanDate;
         this.dueDate = dueDate;
         this.borrowerName = borrowerName;
+    }
+    
+    public BookLoan(LocalDate loanDate, LocalDate dueDate, Borrower borrower) {
+        this.loanDate = loanDate;
+        this.dueDate = dueDate;
+        this.borrower = borrower;
+        this.borrowerName = borrower.getFullName();
+        this.borrowerEmail = borrower.getEmail();
+        this.borrowerPhone = borrower.getPhoneNumber();
     }
     
     // Business methods
@@ -176,6 +193,22 @@ public class BookLoan {
         this.library = library;
     }
     
+    public Borrower getBorrower() {
+        return borrower;
+    }
+    
+    public void setBorrower(Borrower borrower) {
+        this.borrower = borrower;
+    }
+    
+    public Librarian getProcessedBy() {
+        return processedBy;
+    }
+    
+    public void setProcessedBy(Librarian processedBy) {
+        this.processedBy = processedBy;
+    }
+    
     // equals and hashCode based on book, library, loanDate, and borrowerName
     @Override
     public boolean equals(Object o) {
@@ -201,8 +234,11 @@ public class BookLoan {
                 ", dueDate=" + dueDate +
                 ", returnDate=" + returnDate +
                 ", borrowerName='" + borrowerName + '\'' +
+                ", borrowerEmail='" + borrowerEmail + '\'' +
                 ", bookTitle='" + (book != null ? book.getTitle() : "null") + '\'' +
                 ", libraryName='" + (library != null ? library.getName() : "null") + '\'' +
+                ", borrower='" + (borrower != null ? borrower.getFullName() : "null") + '\'' +
+                ", processedBy='" + (processedBy != null ? processedBy.getFullName() : "null") + '\'' +
                 ", overdue=" + isOverdue() +
                 ", fineAmount=" + fineAmount +
                 '}';

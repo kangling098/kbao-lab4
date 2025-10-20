@@ -32,8 +32,6 @@ public class Book {
     @Column(nullable = false, unique = true, length = 13)
     private String isbn;
     
-    
-    
     @PastOrPresent(message = "Publication date must be in the past or present")
     @Column(name = "publication_date")
     private LocalDate publicationDate;
@@ -60,14 +58,6 @@ public class Book {
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;
     
-    @ManyToMany
-    @JoinTable(
-        name = "book_authors",
-        joinColumns = @JoinColumn(name = "book_id"),
-        inverseJoinColumns = @JoinColumn(name = "author_id")
-    )
-    private List<Author> authors = new ArrayList<>();
-    
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookLoan> bookLoans = new ArrayList<>();
     
@@ -82,24 +72,6 @@ public class Book {
     }
     
     // Helper methods for relationships
-    public void addAuthor(Author author) {
-        if (!this.authors.contains(author)) {
-            this.authors.add(author);
-            if (!author.getBooks().contains(this)) {
-                author.getBooks().add(this);
-            }
-        }
-    }
-    
-    public void removeAuthor(Author author) {
-        if (this.authors.contains(author)) {
-            this.authors.remove(author);
-            if (author.getBooks().contains(this)) {
-                author.getBooks().remove(this);
-            }
-        }
-    }
-    
     public void addBookLoan(BookLoan bookLoan) {
         if (!this.bookLoans.contains(bookLoan)) {
             this.bookLoans.add(bookLoan);
@@ -146,8 +118,6 @@ public class Book {
     public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
-    
-    
     
     public LocalDate getPublicationDate() {
         return publicationDate;
@@ -197,14 +167,6 @@ public class Book {
         this.publisher = publisher;
     }
     
-    public List<Author> getAuthors() {
-        return authors;
-    }
-    
-    public void setAuthors(List<Author> authors) {
-        this.authors = authors;
-    }
-    
     public List<BookLoan> getBookLoans() {
         return bookLoans;
     }
@@ -213,7 +175,29 @@ public class Book {
         this.bookLoans = bookLoans;
     }
     
-    // equals and hashCode based on business key (ISBN)
+    // Business methods
+    public boolean isOverdue() {
+        return dueDate != null && LocalDate.now().isAfter(dueDate);
+    }
+    
+    public boolean isAvailableForLoan() {
+        return isAvailable && dueDate == null;
+    }
+    
+    public void loanBook(LocalDate dueDate) {
+        if (!isAvailable) {
+            throw new IllegalStateException("Book is not available for loan");
+        }
+        this.isAvailable = false;
+        this.dueDate = dueDate;
+    }
+    
+    public void returnBook() {
+        this.isAvailable = true;
+        this.dueDate = null;
+    }
+    
+    // equals and hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -227,7 +211,6 @@ public class Book {
         return Objects.hash(isbn);
     }
     
-    // toString for formatted output
     @Override
     public String toString() {
         return "Book{" +
@@ -235,12 +218,13 @@ public class Book {
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", isbn='" + isbn + '\'' +
-                ", publisher='" + (publisher != null ? publisher.getName() : "null") + '\'' +
                 ", publicationDate=" + publicationDate +
                 ", pageCount=" + pageCount +
                 ", price=" + price +
                 ", isAvailable=" + isAvailable +
                 ", dueDate=" + dueDate +
+                ", publisher='" + (publisher != null ? publisher.getName() : "null") + '\'' +
+                ", bookLoans count=" + bookLoans.size() +
                 '}';
     }
 }

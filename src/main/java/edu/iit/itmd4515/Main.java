@@ -1,34 +1,35 @@
 package edu.iit.itmd4515;
 
-import edu.iit.itmd4515.domain.*;
-import jakarta.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
+import edu.iit.itmd4515.service.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Main class for NetBeans to run the JPA project.
- * This class demonstrates the JPA relationships implemented in Lab 5.
- * Uses direct JDBC connection instead of JNDI for standalone execution.
+ * Main class for NetBeans to run the EJB Lab 6 project.
+ * This class demonstrates the EJB service layer using JPA persistence.
  */
 public class Main {
     
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     
     public static void main(String[] args) {
-        LOG.info("Starting JPA Lab 5 - Relationships Demo");
+        LOG.info("Starting EJB Lab 6 - Service Layer Demo");
         
-        // Create EntityManagerFactory using standalone persistence unit
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("itmd4515StandalonePU");
-        EntityManager em = emf.createEntityManager();
+        EntityManagerFactory emf = null;
+        EntityManager em = null;
         
         try {
-            // Demonstrate relationships
-            demonstrateRelationships(em);
+            // Create EntityManagerFactory
+            emf = Persistence.createEntityManagerFactory("itmd4515StandalonePU");
+            em = emf.createEntityManager();
             
-            LOG.info("JPA Lab 5 - Relationships Demo completed successfully!");
+            // Create and demonstrate services
+            demonstrateServices(em);
+            
+            LOG.info("EJB Lab 6 - Service Layer Demo completed successfully!");
             
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error during demo", e);
@@ -42,117 +43,84 @@ public class Main {
         }
     }
     
-    private static void demonstrateRelationships(EntityManager em) {
-        EntityTransaction tx = em.getTransaction();
+    private static void demonstrateServices(EntityManager em) {
+        LOG.info("=== DEMONSTRATING EJB SERVICE LAYER ===");
         
-        try {
-            tx.begin();
-            
-            // Create a publisher
-            Publisher publisher = new Publisher("Demo Publisher", "123 Main St", "Chicago", "USA");
-            publisher.setEmail("contact@demopublisher.com");
-            em.persist(publisher);
-            
-            // Create authors
-            Author author1 = new Author("John", "Doe", "USA");
-            author1.setEmail("john.doe@example.com");
-            em.persist(author1);
-            
-            Author author2 = new Author("Jane", "Smith", "UK");
-            author2.setEmail("jane.smith@example.com");
-            em.persist(author2);
-            
-            // Create a book
-            Book book = new Book("JPA Relationships Guide", "John Doe", "9781234567890");
-            book.setPublicationDate(LocalDate.of(2024, 1, 15));
-            book.setPageCount(250);
-            book.setPrice(29.99);
-            book.setIsAvailable(true);
-            
-            // Establish relationships
-            book.setPublisher(publisher);
-            book.addAuthor(author1);
-            book.addAuthor(author2);
-            
-            em.persist(book);
-            
-            // Create a library
-            Library library = new Library("Demo Library", "456 Oak Ave", "Chicago", "IL", "60601",
-                                         LocalTime.of(9, 0), LocalTime.of(18, 0), 200);
-            library.setEmail("info@demolibrary.org");
-            em.persist(library);
-            
-            // Create a book loan
-            BookLoan loan = new BookLoan(LocalDate.now(), LocalDate.now().plusDays(14), "Student Name");
-            loan.setBorrowerEmail("student@example.com");
-            loan.setBook(book);
-            loan.setLibrary(library);
-            
-            em.persist(loan);
-            
-            tx.commit();
-            
-            // Query and display results
-            displayResults(em);
-            
-        } catch (Exception e) {
-            if (tx != null && tx.isActive()) {
-                tx.rollback();
-            }
-            throw e;
-        }
-    }
-    
-    private static void displayResults(EntityManager em) {
-        LOG.info("=== DEMONSTRATION RESULTS ===");
+        // Create services with injected EntityManager
+        BookService bookService = new BookService();
+        bookService.em = em;
         
-        // Display books with their relationships
-        TypedQuery<Book> bookQuery = em.createQuery("SELECT b FROM Book b", Book.class);
-        List<Book> books = bookQuery.getResultList();
+        BorrowerService borrowerService = new BorrowerService();
+        borrowerService.em = em;
         
-        for (Book book : books) {
-            LOG.log(Level.INFO, "\n--- Book: {0} ---", book.getTitle());
-            LOG.log(Level.INFO, "ISBN: {0}", book.getIsbn());
-            LOG.log(Level.INFO, "Author: {0}", book.getAuthor());
-            
-            if (book.getPublisher() != null) {
-                LOG.log(Level.INFO, "Publisher: {0}", book.getPublisher().getName());
-            }
-            
-            LOG.log(Level.INFO, "Authors count: {0}", book.getAuthors().size());
-            for (Author author : book.getAuthors()) {
-                LOG.log(Level.INFO, "  - {0} {1}", new Object[]{author.getFirstName(), author.getLastName()});
-            }
-            
-            LOG.log(Level.INFO, "Book loans count: {0}", book.getBookLoans().size());
-        }
+        LibraryService libraryService = new LibraryService();
+        libraryService.em = em;
         
-        // Display publishers with their books
-        TypedQuery<Publisher> publisherQuery = em.createQuery("SELECT p FROM Publisher p", Publisher.class);
-        List<Publisher> publishers = publisherQuery.getResultList();
+        BookLoanService bookLoanService = new BookLoanService();
+        bookLoanService.em = em;
         
-        for (Publisher publisher : publishers) {
-            LOG.log(Level.INFO, "\n--- Publisher: {0} ---", publisher.getName());
-            LOG.log(Level.INFO, "Books published: {0}", publisher.getBooks().size());
-            for (Book pubBook : publisher.getBooks()) {
-                LOG.log(Level.INFO, "  - {0}", pubBook.getTitle());
-            }
-        }
+        PublisherService publisherService = new PublisherService();
+        publisherService.em = em;
         
-        // Display libraries with their loans
-        TypedQuery<Library> libraryQuery = em.createQuery("SELECT l FROM Library l", Library.class);
-        List<Library> libraries = libraryQuery.getResultList();
+        LibrarianService librarianService = new LibrarianService();
+        librarianService.em = em;
         
-        for (Library library : libraries) {
-            LOG.log(Level.INFO, "\n--- Library: {0} ---", library.getName());
-            LOG.log(Level.INFO, "Location: {0}, {1}", new Object[]{library.getCity(), library.getState()});
-            LOG.log(Level.INFO, "Book loans: {0}", library.getBookLoans().size());
-            for (BookLoan loan : library.getBookLoans()) {
-                LOG.log(Level.INFO, "  - {0} by {1} (Due: {2})", 
+        // Create database seeder and run it
+        DatabaseSeedService seedService = new DatabaseSeedService();
+        seedService.bookService = bookService;
+        seedService.borrowerService = borrowerService;
+        seedService.libraryService = libraryService;
+        seedService.bookLoanService = bookLoanService;
+        seedService.publisherService = publisherService;
+        seedService.librarianService = librarianService;
+        
+        // Run database seeding
+        seedService.seedDatabase();
+        
+        // Demonstrate service operations
+        LOG.info("\n--- Service Layer Operations ---");
+        
+        // Count entities
+        LOG.log(Level.INFO, "Total books: {0}", bookService.count());
+        LOG.log(Level.INFO, "Total borrowers: {0}", borrowerService.count());
+        LOG.log(Level.INFO, "Total libraries: {0}", libraryService.count());
+        LOG.log(Level.INFO, "Total book loans: {0}", bookLoanService.count());
+        
+        // Find available books
+        LOG.info("\n--- Available Books ---");
+        bookService.findAvailableBooks().forEach(book -> {
+            LOG.log(Level.INFO, "Available: {0} by {1} (${2})", 
+                   new Object[]{book.getTitle(), book.getAuthor(), book.getPrice()});
+        });
+        
+        // Find active borrowers
+        LOG.info("\n--- Active Borrowers ---");
+        borrowerService.findActiveBorrowers().forEach(borrower -> {
+            LOG.log(Level.INFO, "Active: {0} {1} ({2})", 
+                   new Object[]{borrower.getFirstName(), borrower.getLastName(), borrower.getEmail()});
+        });
+        
+        // Find overdue loans
+        LOG.info("\n--- Overdue Loans ---");
+        var overdueLoans = bookLoanService.findOverdueLoans();
+        if (overdueLoans.isEmpty()) {
+            LOG.info("No overdue loans found");
+        } else {
+            overdueLoans.forEach(loan -> {
+                LOG.log(Level.INFO, "Overdue: \"{0}\" by {1} (Due: {2})", 
                        new Object[]{loan.getBook().getTitle(), loan.getBorrowerName(), loan.getDueDate()});
-            }
+            });
         }
         
-        LOG.info("\n=== RELATIONSHIPS DEMONSTRATION COMPLETE ===");
+        // Demonstrate library statistics
+        LOG.info("\n--- Library Statistics ---");
+        libraryService.findAll().forEach(library -> {
+            long activeLoans = libraryService.countActiveLoans(library.getId());
+            long totalLoans = libraryService.countTotalLoans(library.getId());
+            LOG.log(Level.INFO, "{0}: {1} active loans, {2} total loans", 
+                   new Object[]{library.getName(), activeLoans, totalLoans});
+        });
+        
+        LOG.info("\n=== SERVICE LAYER DEMONSTRATION COMPLETE ===");
     }
 }
