@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <title>Library Management System - Book Created Successfully</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                background-color: #f5f5f5;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .success-message {
+                background-color: #4CAF50;
+                color: white;
+                padding: 15px;
+                border-radius: 4px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            .book-details {
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 4px;
+                margin-bottom: 20px;
+            }
+            .detail-row {
+                margin-bottom: 10px;
+                padding: 8px 0;
+                border-bottom: 1px solid #eee;
+            }
+            .detail-row:last-child {
+                border-bottom: none;
+            }
+            .detail-label {
+                font-weight: bold;
+                display: inline-block;
+                width: 150px;
+                color: #555;
+            }
+            .detail-value {
+                color: #333;
+            }
+            .button-container {
+                text-align: center;
+                margin-top: 20px;
+            }
+            .back-button {
+                background-color: #2196F3;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+            }
+            .back-button:hover {
+                background-color: #1976D2;
+            }
+            h1 {
+                color: #333;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            h2 {
+                color: #4CAF50;
+                margin-bottom: 20px;
+            }
+        </style>
+    </h:head>
+    
+    <h:body>
+        <div class="container">
+            <h1>Library Management System</h1>
+            
+            <div class="success-message">
+                <h2>✓ Book Created Successfully!</h2>
+                <h:outputText value="#{bookController.successMessage}"/>
+            </div>
+            
+            <h2>Book Details</h2>
+            <div class="book-details">
+                <div class="detail-row">
+                    <span class="detail-label">Title:</span>
+                    <span class="detail-value">
+                        <h:outputText value="#{bookController.createdBook.title}"/>
+                    </span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Author:</span>
+                    <span class="detail-value">
+                        <h:outputText value="#{bookController.createdBook.author}"/>
+                    </span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">ISBN:</span>
+                    <span class="detail-value">
+                        <h:outputText value="#{bookController.createdBook.isbn}"/>
+                    </span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Publication Date:</span>
+                    <span class="detail-value">
+                        <h:outputText value="#{bookController.createdBook.publicationDate}">
+                            <f:convertDateTime pattern="MMMM dd, yyyy"/>
+                        </h:outputText>
+                    </span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Page Count:</span>
+                    <span class="detail-value">
+                        <h:outputText value="#{bookController.createdBook.pageCount}"/>
+                    </span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Price:</span>
+                    <span class="detail-value">
+                        $<h:outputText value="#{bookController.createdBook.price}">
+                            <f:convertNumber type="currency" currencyCode="USD"/>
+                        </h:outputText>
+                    </span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Availability:</span>
+                    <span class="detail-value">
+                        <h:outputText value="#{bookController.createdBook.isAvailable ? 'Available' : 'Not Available'}"/>
+                    </span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Book ID:</span>
+                    <span class="detail-value">
+                        <h:outputText value="#{bookController.createdBook.id}"/>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <h:link outcome="index" styleClass="back-button">Create Another Book</h:link>
+            </div>
+        </div>
+    </h:body>
+</html>

@@ -7,7 +7,8 @@
     <persistence-unit name="itmd4515testPU" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>edu.iit.itmd4515.domain.Book</class>
-        <class>edu.iit.itmd4515.domain.Author</class>
+        <class>edu.iit.itmd4515.domain.Borrower</class>
+        <class>edu.iit.itmd4515.domain.Librarian</class>
         <class>edu.iit.itmd4515.domain.Publisher</class>
         <class>edu.iit.itmd4515.domain.Library</class>
         <class>edu.iit.itmd4515.domain.BookLoan</class>

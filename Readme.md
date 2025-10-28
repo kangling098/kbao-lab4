@@ -1,16 +1,16 @@
-# Lab 6 - EJB Service Layer
-kbao2 lab 6 README - EJB Service Layer Implementation
+# Lab 7 - JSF Implementation
+kbao2 lab 7 README - JSF Web Application Implementation
 
-## 🎯 Lab 6 Overview
+## 🎯 Lab 7 Overview
 
-This project has been enhanced from Lab 5 to implement **EJB Service Layer** as required by Lab 6. The implementation includes:
+This project has been enhanced from Lab 6 to implement **JSF (JavaServer Faces)** functionality as required by Lab 7. The implementation replaces previous Servlet/JSP work with modern JSF components:
 
-- ✅ **@Stateless EJB Components** for all database operations (CRUD)
-- ✅ **Abstract Service Pattern** with generic types
-- ✅ **@PersistenceContext EntityManager Injection**
-- ✅ **@Startup @Singleton EJB** for database seeding
-- ✅ **Comprehensive Service Layer** with business logic
-- ✅ **Updated Main class** for service layer demonstration
+- ✅ **JSF Backing Bean** with @Named and @RequestScoped annotations
+- ✅ **JSF Form Page** with h:form, h:inputText, and h:commandButton
+- ✅ **JSF Confirmation Page** displaying saved entity fields
+- ✅ **Jakarta Bean Validation** integration with h:message tags
+- ✅ **Command Button Action Methods** invoking EJB services
+- ✅ **Complete Web Application** with WAR packaging
 
 ## 📋 Business Domain Description
 
@@ -18,44 +18,57 @@ I have chosen a **Library Management System** as my business domain for this sem
 
 A library management system handles the core operations of tracking books, managing checkouts, handling member registrations, and maintaining inventory. This domain offers excellent opportunities to explore various JPA relationships and EJB service layer patterns including stateless session beans, dependency injection, and transaction management.
 
-## 🏗️ Lab 6 Architecture
+## 🏗️ Lab 7 JSF Architecture
 
-### **EJB Service Layer Design**
-The project implements a comprehensive service layer using EJB 4.0 specifications:
+### **JSF Web Application Design**
+The project now implements a complete JSF web application with the following components:
 
-#### **AbstractService<T> - Generic Base Service**
+#### **BookController - JSF Backing Bean**
 ```java
-@Stateless
-public abstract class AbstractService<T> {
-    @PersistenceContext
-    public EntityManager em;
+@Named("bookController")
+@RequestScoped
+public class BookController {
+    @EJB
+    private BookService bookService;
     
-    // CRUD Operations: create, findById, findAll, update, delete, count
+    // Form fields with Jakarta Bean Validation
+    @NotBlank(message = "Title is required")
+    @Size(max = 200, message = "Title must not exceed 200 characters")
+    private String title;
+    
+    // Action method for form submission
+    public String createBook() {
+        // Creates book using EJB service
+        // Returns navigation outcome
+    }
 }
 ```
 
-#### **Entity-Specific Services**
-- **BookService**: Book management with custom queries (findByTitle, findByAuthor, findAvailableBooks)
-- **BorrowerService**: Borrower management with membership tracking
-- **LibrarianService**: Staff management with employment details
-- **LibraryService**: Library branch management with statistics
-- **BookLoanService**: Loan transaction management with overdue tracking
-- **PublisherService**: Publisher catalog management
+#### **JSF Pages**
+- **index.xhtml**: Form page with h:form, h:inputText, h:commandButton, h:message
+- **confirmation.xhtml**: Confirmation page displaying saved entity details
 
-### **Database Seeding with @Startup Singleton**
-```java
-@Singleton
-@Startup
-public class DatabaseSeedService {
-    @Inject
-    private BookService bookService;
-    // ... other services
-    
-    @PostConstruct
-    public void seedDatabase() {
-        // Automatically seeds database on application startup
-    }
-}
+### **JSF Configuration**
+```xml
+<!-- faces-config.xml -->
+<faces-config version="4.0">
+    <application>
+        <resource-bundle>
+            <base-name>messages</base-name>
+            <var>msg</var>
+        </resource-bundle>
+    </application>
+</faces-config>
+
+<!-- web.xml -->
+<servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>Faces Servlet</servlet-name>
+    <url-pattern>*.xhtml</url-pattern>
+</servlet-mapping>
 ```
 
 ## ✅ Lab 6 Service Implementation
@@ -141,56 +154,43 @@ public class PublisherService extends AbstractService<Publisher> {
 }
 ```
 
-## 🚀 Lab 6 Main Class Execution
+## 🚀 Lab 7 JSF Execution
 
-### **Service Layer Demonstration**
-The updated Main.java class demonstrates the complete EJB service layer:
+### **JSF Form Demonstration**
+The JSF implementation provides a complete web interface for book creation:
 
+1. **Access the form**: Navigate to `http://localhost:8080/itmd4515-fp-1.0-SNAPSHOT/`
+2. **Fill in book details**: Title, Author, ISBN, Publication Date, Page Count, Price
+3. **Submit the form**: Click "Create Book" button
+4. **View confirmation**: See the saved book details on confirmation page
+5. **Create another book**: Click "Create Another Book" to return to form
+
+### **JSF Features Demonstrated**
+- **Form Validation**: Real-time validation with h:message display
+- **Command Button**: h:commandButton invokes backing bean action
+- **Navigation**: Automatic navigation between pages
+- **Data Display**: h:outputText displays saved entity fields
+- **Styling**: Custom CSS for professional appearance
+
+### **Sample Form Submission**
 ```
-Starting EJB Lab 6 - Service Layer Demo
-=== DEMONSTRATING EJB SERVICE LAYER ===
-
---- Service Layer Operations ---
-Total books: 3
-Total borrowers: 3
-Total libraries: 2
-Total book loans: 3
-
---- Available Books ---
-Available: Java Programming Fundamentals by Dr. Alice Smith ($59.99)
-Available: Database Design and Implementation by Prof. Bob Wilson ($54.99)
-Available: Web Development with Modern Frameworks by Dr. Carol Davis ($69.99)
-
---- Active Borrowers ---
-Active: John Doe (john.doe@student.edu)
-Active: Jane Smith (jane.smith@school.edu)
-Active: Robert Johnson (robert.johnson@email.com)
-
---- Overdue Loans ---
-Overdue: "Database Design and Implementation" by Jane Smith (Due: 2025-10-06)
-
---- Library Statistics ---
-Main Public Library: 2 active loans, 2 total loans
-West Side Branch: 1 active loans, 1 total loans
-
-=== SERVICE LAYER DEMONSTRATION COMPLETE ===
-EJB Lab 6 - Service Layer Demo completed successfully!
+=== JSF FORM SUBMISSION ===
+✓ Book Created Successfully!
+Book ID: 1
+Title: Java Programming Fundamentals
+Author: Dr. Alice Smith
+ISBN: 9781234567890
+Publication Date: January 15, 2024
+Page Count: 450
+Price: $59.99
+Availability: Available
 ```
 
-### **Database Seeding Results**
-The @Startup singleton automatically creates:
-- **2 Publishers**: Tech Books Publishing, Education Press
-- **2 Libraries**: Main Public Library, West Side Branch
-- **2 Librarians**: Head Librarian, Reference Librarian
-- **3 Books**: Java Programming, Database Design, Web Development
-- **3 Borrowers**: Student, Teacher, Parent
-- **3 Book Loans**: Active and overdue scenarios
-
-### **How to Run in NetBeans**
-1. **Right-click on the project** in NetBeans
-2. **Select "Run"** or **"Clean and Build"** then "Run"
-3. **NetBeans will automatically find and execute the Main class**
-4. **View the console output** to see the EJB service layer demonstration
+### **How to Deploy and Run**
+1. **Build the WAR file**: `mvn clean compile war:war -Dmaven.test.skip=true`
+2. **Deploy to application server**: GlassFish, WildFly, etc.
+3. **Access the application**: `http://localhost:8080/itmd4515-fp-1.0-SNAPSHOT/`
+4. **Test the JSF functionality**: Create books through the web interface
 
 ## 🧪 Test Results
 
@@ -251,67 +251,92 @@ public void returnBook() {
 
 ## 🔧 Technical Configuration
 
-### **Maven Dependencies**
+### **JSF Configuration**
 ```xml
-<!-- EJB Container for standalone execution -->
-<dependency>
-    <groupId>org.glassfish.main.extras</groupId>
-    <artifactId>glassfish-embedded-all</artifactId>
-    <version>7.0.18</version>
-    <scope>compile</scope>
-</dependency>
+<!-- faces-config.xml -->
+<faces-config version="4.0">
+    <application>
+        <resource-bundle>
+            <base-name>messages</base-name>
+            <var>msg</var>
+        </resource-bundle>
+    </application>
+</faces-config>
+
+<!-- web.xml -->
+<servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+<servlet-mapping>
+    <servlet-name>Faces Servlet</servlet-name>
+    <url-pattern>*.xhtml</url-pattern>
+</servlet-mapping>
 ```
 
-### **Persistence Configuration**
-- **EntityManager Injection**: Uses @PersistenceContext for automatic injection
-- **Transaction Management**: JTA for web applications, RESOURCE_LOCAL for standalone
-- **Database**: MySQL 8.0 with comprehensive relationship mapping
-- **Validation**: Jakarta Bean Validation with Hibernate Validator
+### **Maven Dependencies for JSF**
+```xml
+<!-- WAR Plugin for JSF deployment -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-war-plugin</artifactId>
+    <version>3.4.0</version>
+    <configuration>
+        <warSourceDirectory>src/main/webapp</warSourceDirectory>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+    </configuration>
+</plugin>
+```
 
-### **EJB Annotations Used**
-- **@Stateless**: Marks all service classes as stateless session beans
-- **@Singleton**: Marks the database seeding service as application singleton
-- **@Startup**: Ensures database seeding happens at application startup
-- **@Inject**: Enables dependency injection between services
-- **@PersistenceContext**: Provides automatic EntityManager injection
-- **@Transactional**: Ensures proper transaction management
+### **JSF Annotations Used**
+- **@Named**: Marks backing bean for JSF EL expression access
+- **@RequestScoped**: Defines bean lifecycle as request scope
+- **@EJB**: Enables EJB dependency injection in backing bean
+- **@PostConstruct**: Initializes backing bean after construction
 
-## 🎯 Lab 6 Requirements Fulfillment
+### **JSF Components Used**
+- **h:form**: JSF form component with automatic CSRF protection
+- **h:inputText**: Input field with validation integration
+- **h:commandButton**: Action button invoking backing bean methods
+- **h:message**: Validation error message display
+- **h:outputText**: Data display with formatting support
+- **f:validateRegex**: Regular expression validation
+- **f:convertDateTime**: Date formatting and conversion
+
+## ✅ Lab 7 Requirements Fulfillment
 
 ### **Core Requirements:**
-- ✅ **@Stateless EJB Components**: All database operations use stateless session beans
-- ✅ **CRUD Operations**: Complete create, read, update, delete functionality
-- ✅ **@PersistenceContext Injection**: EntityManager injected using resource injection
-- ✅ **JPA Usage**: No JDBC, all operations use JPA
-- ✅ **Abstract Service Pattern**: Generic AbstractService<T> implementation
-- ✅ **Service-per-Entity Design**: Dedicated service for each entity
-- ✅ **@Startup Singleton EJB**: DatabaseSeedService with automatic seeding
-- ✅ **CRUD Method Invocation**: Services invoke each other's CRUD methods
-- ✅ **No Direct EntityManager**: Startup singleton uses services, not direct EM
-- ✅ **Logger Output**: Comprehensive logging with relationship navigation
-- ✅ **NetBeans Integration**: Main class for direct NetBeans execution
+- ✅ **Replace Servlet/JSP functionality**: All previous servlet/JSP code removed
+- ✅ **JSF Backing Bean**: BookController with @Named and @RequestScoped annotations
+- ✅ **JSF Form Page**: index.xhtml with h:form, h:inputText, h:commandButton
+- ✅ **JSF Confirmation Page**: confirmation.xhtml displaying saved entity fields
+- ✅ **Command Button Action**: h:commandButton invokes createBook() action method
+- ✅ **h:message Tags**: Validation error display with Jakarta Bean Validation
+- ✅ **EJB Integration**: Backing bean uses EJB services for persistence
+- ✅ **Entity Creation**: Complete book creation through JSF interface
+- ✅ **Form Validation**: Client and server-side validation with proper feedback
 
-### **Additional Features:**
-- ✅ **Comprehensive Business Logic**: Overdue detection, availability checking
-- ✅ **Custom Query Methods**: Entity-specific search and filtering
-- ✅ **Transaction Management**: Automatic transaction handling
-- ✅ **Dependency Injection**: Full CDI integration between services
-- ✅ **Database Relationship Navigation**: Complete entity graph traversal
-- ✅ **Error Handling**: Proper exception handling and validation
+### **Additional JSF Features:**
+- ✅ **Navigation Management**: Proper JSF navigation with faces-redirect
+- ✅ **Styling**: Professional CSS styling for modern appearance
+- ✅ **Responsive Design**: Clean, user-friendly interface
+- ✅ **Validation Integration**: Jakarta Bean Validation with JSF messages
+- ✅ **Data Conversion**: Proper date and number formatting
+- ✅ **WAR Packaging**: Complete web application packaging
 
 ## 🏆 Conclusion
 
-Lab 6 successfully implements a comprehensive **EJB Service Layer** that transforms the JPA entity model into a fully functional enterprise application. The implementation demonstrates:
+Lab 7 successfully implements a comprehensive **JSF Web Application** that replaces previous Servlet/JSP functionality with modern JavaServer Faces technology. The implementation demonstrates:
 
-- **Enterprise Java Best Practices**: Proper use of EJB annotations and patterns
-- **Service-Oriented Architecture**: Clean separation of business logic
-- **Transaction Management**: Automatic transaction handling
-- **Dependency Injection**: Modern Java EE dependency management
-- **Database Seeding**: Automatic application initialization
-- **Comprehensive Logging**: Detailed operation tracking
-- **NetBeans Integration**: Seamless IDE execution
+- **Component-Based Web Development**: Proper use of JSF UI components and backing beans
+- **MVC Architecture**: Clear separation between view (XHTML), controller (backing bean), and model (EJB services)
+- **Form Validation**: Integration of Jakarta Bean Validation with JSF error messaging
+- **Navigation Management**: Proper JSF navigation patterns with faces-redirect
+- **Professional UI**: Clean, styled web interface with responsive design
+- **Enterprise Integration**: Seamless integration with existing EJB service layer
 
-The service layer provides a solid foundation for building web applications, REST APIs, or other enterprise integrations on top of the library management system domain model.
+The JSF implementation provides a solid foundation for building modern enterprise web applications with proper validation, error handling, and user experience.
 
 ## 🛠️ Build and Run Instructions
 
@@ -319,7 +344,7 @@ The service layer provides a solid foundation for building web applications, RES
 - Java 17+
 - Maven 3.6+
 - MySQL 8.0+
-- NetBeans IDE (recommended)
+- Application Server (GlassFish, WildFly, etc.)
 
 ### **Database Setup**
 ```sql
@@ -329,37 +354,35 @@ GRANT ALL PRIVILEGES ON itmd4515.* TO 'itmd4515'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-### **Build Project**
+### **Build WAR File**
 ```bash
-mvn clean compile
+mvn clean compile war:war -Dmaven.test.skip=true
 ```
 
-### **Run Tests**
-```bash
-mvn test
-```
+### **Deploy Application**
+1. **Copy WAR file**: `target/itmd4515-fp-1.0-SNAPSHOT.war`
+2. **Deploy to server**: Use application server admin console or deployment tools
+3. **Start server**: Ensure MySQL is running and application server is started
 
-### **Run Main Class**
-```bash
-mvn exec:java
-```
-
-### **NetBeans Execution**
-1. Open project in NetBeans
-2. Right-click project → "Run"
-3. Or right-click Main.java → "Run File"
+### **Access JSF Application**
+- **Form Page**: `http://localhost:8080/itmd4515-fp-1.0-SNAPSHOT/`
+- **Create Book**: Fill form and submit
+- **Confirmation**: View saved book details
+- **Create Another**: Return to form page
 
 ## 📁 Project Structure
 
 ```
-kbao2-lab6/
-├── pom.xml                           # Maven configuration with EJB dependencies
+kbao2-lab7/
+├── pom.xml                           # Maven configuration with JSF dependencies
 ├── README.md                         # This documentation
 ├── src/
 │   ├── main/
 │   │   ├── java/edu/iit/itmd4515/
 │   │   │   ├── Main.java             # NetBeans execution main class
 │   │   │   ├── config/               # Configuration classes
+│   │   │   ├── controller/           # JSF backing beans
+│   │   │   │   └── BookController.java
 │   │   │   ├── domain/               # JPA entity classes
 │   │   │   │   ├── Book.java
 │   │   │   │   ├── Borrower.java
@@ -376,9 +399,15 @@ kbao2-lab6/
 │   │   │       ├── BookLoanService.java
 │   │   │       ├── PublisherService.java
 │   │   │       └── DatabaseSeedService.java
-│   │   └── resources/META-INF/
-│   │       ├── persistence.xml       # JPA configuration
-│   │       └── persistence-standalone.xml
+│   │   ├── resources/META-INF/
+│   │   │   ├── persistence.xml       # JPA configuration
+│   │   │   └── persistence-standalone.xml
+│   │   └── webapp/                   # JSF web application
+│   │       ├── WEB-INF/
+│   │       │   ├── faces-config.xml  # JSF configuration
+│   │       │   └── web.xml           # Web application configuration
+│   │       ├── index.xhtml           # JSF form page
+│   │       └── confirmation.xhtml    # JSF confirmation page
 │   └── test/
 │       └── java/edu/iit/itmd4515/
 │           ├── BookTest.java         # CRUD operation tests

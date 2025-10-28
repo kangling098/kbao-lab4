@@ -8,7 +8,7 @@
     <groupId>edu.iit.itmd4515</groupId>
     <artifactId>itmd4515-fp</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -101,6 +101,16 @@
                 <configuration>
                     <mainClass>edu.iit.itmd4515.Main</mainClass>
                     <classpathScope>compile</classpathScope>
+                </configuration>
+            </plugin>
+            <!-- WAR Plugin for JSF deployment -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
         </plugins>

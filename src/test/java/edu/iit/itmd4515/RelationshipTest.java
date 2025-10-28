@@ -58,7 +58,7 @@ public class RelationshipTest {
         publisher.setFoundedDate(LocalDate.of(1927, 7, 1));
         
         // Create a book
-        Book book = new Book("The Great Gatsby", "F. Scott Fitzgerald", "9780743273560");
+        Book book = new Book("The Great Gatsby", "F. Scott Fitzgerald", "9780743273561");
         book.setPublicationDate(LocalDate.of(1925, 4, 10));
         book.setPageCount(180);
         book.setPrice(14.99);
@@ -86,93 +86,90 @@ public class RelationshipTest {
     }
     
     @Test
-    @DisplayName("Test Bidirectional ManyToMany Relationship - Book to Author")
-    public void testBookAuthorBidirectionalRelationship() {
-        LOG.info("Testing bidirectional ManyToMany relationship between Book and Author...");
+    @DisplayName("Test Book-Publisher ManyToOne Relationship")
+    public void testBookPublisherManyToOneRelationship() {
+        LOG.info("Testing ManyToOne relationship between Book and Publisher...");
         
-        // Create authors
-        Author author1 = new Author("F. Scott", "Fitzgerald", "USA");
-        author1.setBirthDate(LocalDate.of(1896, 9, 24));
-        author1.setEmail("f.scott.fitzgerald@example.com");
+        // Create publishers
+        Publisher techPublisher = new Publisher("Tech Books Publishing", "123 Tech St", "San Francisco", "USA");
+        techPublisher.setActive(true);
         
-        Author author2 = new Author("Ernest", "Hemingway", "USA");
-        author2.setBirthDate(LocalDate.of(1899, 7, 21));
-        author2.setEmail("ernest.hemingway@example.com");
+        Publisher eduPublisher = new Publisher("Education Press", "456 Edu Ave", "Boston", "USA");
+        eduPublisher.setActive(true);
         
         // Create books
-        Book book1 = new Book("The Great Gatsby", "F. Scott Fitzgerald", "9780743273561");
-        book1.setPublicationDate(LocalDate.of(1925, 4, 10));
-        book1.setPageCount(180);
-        book1.setPrice(14.99);
+        Book book1 = new Book("Java Programming Fundamentals", "Dr. Alice Smith", "978-0-123456-78-9");
+        book1.setPublicationDate(LocalDate.of(2023, 6, 15));
+        book1.setPageCount(450);
+        book1.setPrice(59.99);
         book1.setIsAvailable(true);
+        book1.setPublisher(techPublisher);
         
-        Book book2 = new Book("The Old Man and the Sea", "Ernest Hemingway", "9780684801224");
-        book2.setPublicationDate(LocalDate.of(1952, 9, 1));
-        book2.setPageCount(127);
-        book2.setPrice(12.99);
+        Book book2 = new Book("Database Design and Implementation", "Prof. Bob Wilson", "978-0-987654-32-1");
+        book2.setPublicationDate(LocalDate.of(2023, 3, 20));
+        book2.setPageCount(380);
+        book2.setPrice(54.99);
         book2.setIsAvailable(true);
+        book2.setPublisher(techPublisher);
         
-        // Establish bidirectional relationships using helper methods
-        book1.addAuthor(author1);  // Fitzgerald wrote The Great Gatsby
-        book2.addAuthor(author2);  // Hemingway wrote The Old Man and the Sea
-        
-        // Also demonstrate that we can add multiple authors to a book
-        Author coAuthor = new Author("Co", "Author", "UK");
-        coAuthor.setEmail("co.author@example.com");
-        book1.addAuthor(coAuthor);  // Add a co-author to The Great Gatsby
+        Book book3 = new Book("Web Development with Modern Frameworks", "Dr. Carol Davis", "978-0-567890-12-3");
+        book3.setPublicationDate(LocalDate.of(2023, 9, 10));
+        book3.setPageCount(520);
+        book3.setPrice(69.99);
+        book3.setIsAvailable(true);
+        book3.setPublisher(eduPublisher);
         
         tx.begin();
-        em.persist(author1);
-        em.persist(author2);
-        em.persist(coAuthor);
+        em.persist(techPublisher);
+        em.persist(eduPublisher);
         em.persist(book1);
         em.persist(book2);
+        em.persist(book3);
         tx.commit();
         
         assertNotNull(book1.getId(), "Book1 ID should not be null after persistence");
         assertNotNull(book2.getId(), "Book2 ID should not be null after persistence");
-        assertNotNull(author1.getId(), "Author1 ID should not be null after persistence");
-        assertNotNull(author2.getId(), "Author2 ID should not be null after persistence");
+        assertNotNull(book3.getId(), "Book3 ID should not be null after persistence");
+        assertNotNull(techPublisher.getId(), "Tech Publisher ID should not be null after persistence");
+        assertNotNull(eduPublisher.getId(), "Education Publisher ID should not be null after persistence");
         
         // Clear persistence context to ensure we're reading from database
         em.clear();
         
-        // Verify the bidirectional relationship from Book side
+        // Verify the ManyToOne relationship from Book side
         Book foundBook1 = em.find(Book.class, book1.getId());
-        assertNotNull(foundBook1.getAuthors(), "Book should have authors");
-        assertEquals(2, foundBook1.getAuthors().size(), "Book1 should have 2 authors");
+        assertNotNull(foundBook1.getPublisher(), "Book should have a publisher");
+        assertEquals("Tech Books Publishing", foundBook1.getPublisher().getName(), 
+                    "Book1 should be published by Tech Books Publishing");
         
-        // Verify the bidirectional relationship from Author side
-        Author foundAuthor1 = em.find(Author.class, author1.getId());
-        assertNotNull(foundAuthor1.getBooks(), "Author should have books");
-        assertEquals(1, foundAuthor1.getBooks().size(), "Author1 should have 1 book");
-        assertEquals("The Great Gatsby", foundAuthor1.getBooks().get(0).getTitle(), 
-                    "Author's book title should match");
+        Book foundBook3 = em.find(Book.class, book3.getId());
+        assertEquals("Education Press", foundBook3.getPublisher().getName(), 
+                    "Book3 should be published by Education Press");
         
-        // Test removing relationship
+        // Verify the OneToMany relationship from Publisher side
+        Publisher foundTechPublisher = em.find(Publisher.class, techPublisher.getId());
+        assertNotNull(foundTechPublisher.getBooks(), "Publisher should have books");
+        assertEquals(2, foundTechPublisher.getBooks().size(), "Tech publisher should have 2 books");
+        
+        // Test updating relationship
         tx.begin();
-        Book bookToUpdate = em.find(Book.class, book1.getId());
-        Author authorToRemove = bookToUpdate.getAuthors().stream()
-            .filter(a -> a.getEmail().equals("co.author@example.com"))
-            .findFirst().orElse(null);
-        
-        if (authorToRemove != null) {
-            bookToUpdate.removeAuthor(authorToRemove);
-        }
+        Book bookToUpdate = em.find(Book.class, book3.getId());
+        bookToUpdate.setPublisher(foundTechPublisher); // Move book3 to tech publisher
         tx.commit();
         
-        // Verify the relationship was removed
+        // Verify the relationship was updated
         em.clear();
-        Book updatedBook = em.find(Book.class, book1.getId());
-        assertEquals(1, updatedBook.getAuthors().size(), "Book1 should now have 1 author");
+        Book updatedBook = em.find(Book.class, book3.getId());
+        assertEquals("Tech Books Publishing", updatedBook.getPublisher().getName(), 
+                    "Book3 should now be published by Tech Books Publishing");
         
-        Author updatedAuthor = em.find(Author.class, coAuthor.getId());
-        assertEquals(0, updatedAuthor.getBooks().size(), "Co-author should have 0 books");
+        Publisher updatedTechPublisher = em.find(Publisher.class, techPublisher.getId());
+        assertEquals(3, updatedTechPublisher.getBooks().size(), "Tech publisher should now have 3 books");
         
-        LOG.log(Level.INFO, "Book '{0}' has {1} authors", 
-                new Object[]{foundBook1.getTitle(), foundBook1.getAuthors().size()});
-        LOG.log(Level.INFO, "Author '{0}' has written {1} books", 
-                new Object[]{foundAuthor1.getFullName(), foundAuthor1.getBooks().size()});
+        LOG.log(Level.INFO, "Book '{0}' is published by '{1}'", 
+                new Object[]{foundBook1.getTitle(), foundBook1.getPublisher().getName()});
+        LOG.log(Level.INFO, "Publisher '{0}' has {1} books", 
+                new Object[]{foundTechPublisher.getName(), foundTechPublisher.getBooks().size()});
     }
     
     @Test
@@ -255,6 +252,21 @@ public class RelationshipTest {
     public void testLibraryBookLoanBidirectionalRelationship() {
         LOG.info("Testing bidirectional OneToMany relationship between Library and BookLoan...");
         
+        // Create borrowers
+        Borrower borrower1 = new Borrower("John", "Doe", "john.doe@example.com", "555-123-4567");
+        borrower1.setBirthDate(LocalDate.of(1990, 1, 1));
+        borrower1.setAddress("123 Main St");
+        borrower1.setCity("Chicago");
+        borrower1.setState("IL");
+        borrower1.setZipCode("60601");
+        
+        Borrower borrower2 = new Borrower("Jane", "Smith", "jane.smith@example.com", "555-987-6543");
+        borrower2.setBirthDate(LocalDate.of(1992, 2, 2));
+        borrower2.setAddress("456 Oak Ave");
+        borrower2.setCity("Chicago");
+        borrower2.setState("IL");
+        borrower2.setZipCode("60602");
+        
         // Create a library
         Library library = new Library("Chicago Public Library", "400 S State St", "Chicago", "IL", "60605",
                                       LocalTime.of(9, 0), LocalTime.of(17, 0), 500);
@@ -268,14 +280,10 @@ public class RelationshipTest {
         book.setPrice(13.99);
         book.setIsAvailable(true);
         
-        // Create book loans
-        BookLoan loan1 = new BookLoan(LocalDate.now(), LocalDate.now().plusDays(14), "John Doe");
-        loan1.setBorrowerEmail("john.doe@example.com");
-        loan1.setBorrowerPhone("555-123-4567");
+        // Create book loans with proper borrower relationships
+        BookLoan loan1 = new BookLoan(LocalDate.now(), LocalDate.now().plusDays(14), borrower1);
         
-        BookLoan loan2 = new BookLoan(LocalDate.now().minusDays(7), LocalDate.now().plusDays(7), "Jane Smith");
-        loan2.setBorrowerEmail("jane.smith@example.com");
-        loan2.setBorrowerPhone("555-987-6543");
+        BookLoan loan2 = new BookLoan(LocalDate.now().minusDays(7), LocalDate.now().plusDays(7), borrower2);
         
         // Establish relationships
         library.addBookLoan(loan1);
@@ -284,6 +292,8 @@ public class RelationshipTest {
         book.addBookLoan(loan2);
         
         tx.begin();
+        em.persist(borrower1);
+        em.persist(borrower2);
         em.persist(library);
         em.persist(book);
         // BookLoans are persisted automatically due to cascade
