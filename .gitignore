@@ -1,0 +1,78 @@
+# Maven build artifacts
+target/
+*.war
+*.jar
+*.ear
+*.zip
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+*.project
+*.classpath
+*.settings/
+
+# NetBeans
+nbproject/
+build/
+dist/
+
+# Eclipse
+bin/
+.metadata
+*.launch
+
+# IntelliJ IDEA
+out/
+
+# Gradle
+.gradle/
+build/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log files
+*.log
+error.log
+
+# Database files
+*.db
+*.db-journal
+
+# Local configuration
+local.properties
+config.properties
+
+# Environment specific
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Tomcat
+logs/
+work/
+temp/
+
+# Glassfish/Payara
+glassfish/
+payara/
+domains/
+
+# JPA
+*.jpa
+
+# Test reports
+test-results/
+surefire-reports/
+failsafe-reports/

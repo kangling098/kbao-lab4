@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title><ui:insert name="title">Library Management System</ui:insert></title>
+        
+        <!-- Bootstrap 5 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+        
+        <!-- Custom Styles -->
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .navbar-custom {
+                background-color: #343a40;
+            }
+            .sidebar {
+                min-height: calc(100vh - 56px);
+            }
+            .main-content {
+                min-height: calc(100vh - 56px);
+                background-color: #ffffff;
+            }
+            .footer {
+                background-color: #343a40;
+                color: white;
+                padding: 20px 0;
+            }
+            .card-custom {
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                border: none;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+            <div class="container-fluid">
+                <h:link value="Library Management System" styleClass="navbar-brand" outcome="/index" />
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <h:link styleClass="nav-link" outcome="/index" value="Home" />
+                        </li>
+                        
+                        <ui:fragment rendered="#{loginController.authenticated}">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Books
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <h:link styleClass="dropdown-item" outcome="/index" value="View Books" />
+                                    </li>
+                                    <li>
+                                        <h:link styleClass="dropdown-item" outcome="/index" value="Manage Books" />
+                                    </li>
+                                </ul>
+                            </li>
+                            
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Loans
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <h:link styleClass="dropdown-item" outcome="/index" value="View Loans" />
+                                    </li>
+                                    <li>
+                                        <h:link styleClass="dropdown-item" outcome="/index" value="Manage Loans" />
+                                    </li>
+                                </ul>
+                            </li>
+                        </ui:fragment>
+                        
+                        <ui:fragment rendered="#{loginController.hasRole('ADMIN') or loginController.hasRole('LIBRARIAN')}">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Admin
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <h:link styleClass="dropdown-item" outcome="/admin/dashboard" value="Dashboard" />
+                                    </li>
+                                    <li>
+                                        <h:link styleClass="dropdown-item" outcome="/admin/users" value="Manage Users" />
+                                    </li>
+                                    <li>
+                                        <h:link styleClass="dropdown-item" outcome="/admin/reports" value="Reports" />
+                                    </li>
+                                </ul>
+                            </li>
+                        </ui:fragment>
+                    </ul>
+                    
+                    <ul class="navbar-nav">
+                        <ui:fragment rendered="#{loginController.authenticated}">
+                            <li class="nav-item">
+                                <span class="navbar-text me-3">
+                                    Welcome, <strong>#{loginController.currentUsername}</strong> 
+                                    <span class="badge bg-secondary">#{loginController.hasRole('ADMIN') ? 'ADMIN' : 
+                                        loginController.hasRole('LIBRARIAN') ? 'LIBRARIAN' : 'USER'}</span>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <h:form styleClass="d-inline">
+                                    <h:commandLink styleClass="nav-link" action="#{loginController.logout}" value="Logout" />
+                                </h:form>
+                            </li>
+                        </ui:fragment>
+                        <ui:fragment rendered="#{!loginController.authenticated}">
+                            <li class="nav-item">
+                                <h:link styleClass="nav-link" outcome="/login" value="Login" />
+                            </li>
+                        </ui:fragment>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container-fluid py-4">
+                <ui:insert name="content">
+                    <!-- Default content will go here if not overridden -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card card-custom">
+                                <div class="card-body">
+                                    <p>Default content area</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ui:insert>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p>&copy; 2025 Library Management System. All rights reserved.</p>
+                        <p>Contact: admin@library.edu</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Bootstrap 5 JS Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    </h:body>
+</html>

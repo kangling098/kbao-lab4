@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+        <ui:define name="title">Admin Dashboard - Library Management System</ui:define>
+        
+        <ui:define name="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h2 class="mb-0">Administrator Dashboard</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="lead">Welcome to the Admin Dashboard, <strong>#{loginController.currentUsername}</strong></p>
+                            <p>Manage all library resources, users, and system settings.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- All Books DataTable -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h3 class="mb-0">All Books</h3>
+                        </div>
+                        <div class="card-body">
+                            <h:form id="booksForm">
+                                <div class="table-responsive">
+                                    <h:dataTable id="booksTable" 
+                                                 value="#{bookService.findAll()}" 
+                                                 var="book"
+                                                 styleClass="table table-striped table-hover"
+                                                 headerClass="thead-dark">
+                                        
+                                        <h:column>
+                                            <f:facet name="header">ID</f:facet>
+                                            #{book.id}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Title</f:facet>
+                                            #{book.title}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Author</f:facet>
+                                            #{book.author}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">ISBN</f:facet>
+                                            #{book.isbn}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Publication Date</f:facet>
+                                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                                            #{book.publicationDate}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Price</f:facet>
+                                            $#{book.price}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Status</f:facet>
+                                            <span class="badge #{book.isAvailable ? 'bg-success' : 'bg-warning'}">
+                                                #{book.isAvailable ? 'Available' : 'Checked Out'}
+                                            </span>
+                                        </h:column>
+                                        
+                                        <f:facet name="footer">
+                                            Total Books: #{bookService.findAll().size()}
+                                        </f:facet>
+                                    </h:dataTable>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- All Book Loans DataTable -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h3 class="mb-0">All Book Loans</h3>
+                        </div>
+                        <div class="card-body">
+                            <h:form id="loansForm">
+                                <div class="table-responsive">
+                                    <h:dataTable id="loansTable" 
+                                                 value="#{bookLoanService.findAll()}" 
+                                                 var="loan"
+                                                 styleClass="table table-striped table-hover"
+                                                 headerClass="thead-dark">
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Book Title</f:facet>
+                                            #{loan.book.title}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Borrower</f:facet>
+                                            #{loan.borrowerName}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Loan Date</f:facet>
+                                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                                            #{loan.loanDate}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Due Date</f:facet>
+                                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                                            #{loan.dueDate}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Status</f:facet>
+                                            <span class="badge #{loan.isOverdue() ? 'bg-danger' : loan.returnDate != null ? 'bg-secondary' : 'bg-info'}">
+                                                #{loan.returnDate != null ? 'Returned' : loan.isOverdue() ? 'Overdue' : 'Active'}
+                                            </span>
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Fine</f:facet>
+                                            $#{loan.fineAmount}
+                                        </h:column>
+                                        
+                                        <h:column>
+                                            <f:facet name="header">Library</f:facet>
+                                            #{loan.library.name}
+                                        </h:column>
+                                    </h:dataTable>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

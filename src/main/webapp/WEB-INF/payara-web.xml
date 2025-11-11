@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE payara-web-app PUBLIC "-//Payara Foundation//DTD Payara Server 4 Servlet 3.0//EN" "https://raw.githubusercontent.com/payara/Payara-Server-Documentation/master/schemas/payara-web-app_4.dtd">
+<payara-web-app error-url="">
+    
+    <!-- Security Role Mappings -->
+    <security-role-mapping>
+        <role-name>ADMIN</role-name>
+        <group-name>ADMIN</group-name>
+    </security-role-mapping>
+    
+    <security-role-mapping>
+        <role-name>LIBRARIAN</role-name>
+        <group-name>LIBRARIAN</group-name>
+    </security-role-mapping>
+    
+    <security-role-mapping>
+        <role-name>USER</role-name>
+        <group-name>USER</group-name>
+    </security-role-mapping>
+    
+    <!-- Context Parameters -->
+    <context-root>/kbao2-lab4</context-root>
+    
+    <!-- Additional Payara-specific configurations -->
+    <class-loader delegate="false"/>
+    
+</payara-web-app>
