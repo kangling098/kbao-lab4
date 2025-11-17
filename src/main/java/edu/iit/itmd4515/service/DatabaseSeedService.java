@@ -133,6 +133,8 @@ public class DatabaseSeedService {
         // Create Security Groups
         groupService.createDefaultGroups();
         
+        LOG.info("Created default security groups successfully");
+        
         // Create Publishers
         Publisher techPublisher = new Publisher("Tech Books Publishing", "123 Tech Street", "San Francisco", "USA");
         techPublisher.setEmail("info@techbooks.com");
@@ -157,15 +159,21 @@ public class DatabaseSeedService {
         
         // Create Librarians
         Librarian headLibrarian = new Librarian("Sarah", "Johnson", "HEAD001", "Head Librarian", LocalDate.now().minusYears(5));
+        headLibrarian.setEmail("sarah.johnson@chicagolibrary.org");
+        headLibrarian.setPhoneNumber("(312) 555-0199");
         headLibrarian.setLibrary(mainLibrary);
         headLibrarian.setEmployed(true);
         headLibrarian.setSalary(65000.0);
+        headLibrarian.setDepartment("Administration");
         librarianService.create(headLibrarian);
         
         Librarian branchLibrarian = new Librarian("Michael", "Chen", "LIB002", "Reference Librarian", LocalDate.now().minusYears(2));
+        branchLibrarian.setEmail("michael.chen@chicagolibrary.org");
+        branchLibrarian.setPhoneNumber("(312) 555-0299");
         branchLibrarian.setLibrary(branchLibrary);
         branchLibrarian.setEmployed(true);
         branchLibrarian.setSalary(48000.0);
+        branchLibrarian.setDepartment("Reference");
         librarianService.create(branchLibrarian);
         
         // Create Books
@@ -316,10 +324,27 @@ public class DatabaseSeedService {
                                    Borrower studentBorrower, Borrower teacherBorrower, Borrower parentBorrower) {
         LOG.info("Creating security data...");
         
-        // Get the groups
+        // Get or ensure the groups exist
         Group adminGroup = groupService.findByGroupName("ADMIN");
+        if (adminGroup == null) {
+            LOG.log(Level.WARNING, "ADMIN group not found, creating it");
+            adminGroup = new Group("ADMIN", "System Administrators with full access");
+            adminGroup = groupService.create(adminGroup);
+        }
+        
         Group librarianGroup = groupService.findByGroupName("LIBRARIAN");
+        if (librarianGroup == null) {
+            LOG.log(Level.WARNING, "LIBRARIAN group not found, creating it");
+            librarianGroup = new Group("LIBRARIAN", "Librarians with book management access");
+            librarianGroup = groupService.create(librarianGroup);
+        }
+        
         Group userGroup = groupService.findByGroupName("USER");
+        if (userGroup == null) {
+            LOG.log(Level.WARNING, "USER group not found, creating it");
+            userGroup = new Group("USER", "Regular users with borrowing privileges");
+            userGroup = groupService.create(userGroup);
+        }
         
         // Create admin user for head librarian
         User adminUser = new User("admin", "admin123", "admin@library.edu");

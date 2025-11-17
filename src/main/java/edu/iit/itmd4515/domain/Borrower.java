@@ -34,7 +34,7 @@ public class Borrower {
     private String email;
     
     @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "^\\d{3}-\\d{3}-\\d{4}$", message = "Phone must be in format XXX-XXX-XXXX")
+    @Pattern(regexp = "^\\d{3}-\\d{3}-\\d{4}$|^\\(\\d{3}\\) \\d{3}-\\d{4}$|^\\d{10}$", message = "Phone must be in format XXX-XXX-XXXX, (XXX) XXX-XXXX, or XXXXXXXXXX")
     @Size(max = 20, message = "Phone must not exceed 20 characters")
     @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;

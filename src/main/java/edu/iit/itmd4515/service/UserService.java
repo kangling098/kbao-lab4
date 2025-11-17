@@ -47,11 +47,10 @@ public class UserService extends AbstractService<User> {
         LOG.log(Level.INFO, "Authenticating user: {0}", username);
         User user = findByUsername(username);
         if (user != null && user.getIsActive()) {
-            // In a real application, you would hash and compare passwords
-            // For this lab, we'll do a simple comparison
-            boolean authenticated = password != null && password.equals(user.getPassword());
-            LOG.log(Level.INFO, "Authentication result for {0}: {1}", new Object[]{username, authenticated});
-            return authenticated;
+            // NOTE: This method is kept for compatibility but should not be used for actual authentication
+            // Jakarta EE Security handles authentication through the security framework
+            LOG.log(Level.WARNING, "Direct authentication attempted for user: {0}. Use Jakarta EE Security instead.", username);
+            return false;
         }
         return false;
     }

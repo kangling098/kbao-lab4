@@ -9,8 +9,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-@NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
-@NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username")
+@NamedQueries({
+    @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
+    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
+    @NamedQuery(name = "User.findUsersByGroupName", query = "SELECT u FROM User u JOIN u.groups g WHERE g.groupName = :groupName")
+})
 public class User {
     
     @Id

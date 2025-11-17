@@ -34,7 +34,7 @@ public class Librarian {
     private String email;
     
     @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Phone number must be valid")
+    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$|^\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$|^[0-9]{3}-[0-9]{3}-[0-9]{4}$", message = "Phone number must be valid")
     @Size(max = 20, message = "Phone number must not exceed 20 characters")
     @Column(name = "phone_number", length = 20)
     private String phoneNumber;

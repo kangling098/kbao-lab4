@@ -5,12 +5,9 @@ import jakarta.annotation.security.DeclareRoles;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
 import jakarta.inject.Inject;
-import jakarta.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.CustomFormAuthenticationMechanismDefinition;
-import jakarta.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
-import jakarta.security.enterprise.identitystore.LdapIdentityStoreDefinition;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,8 +25,8 @@ import java.util.logging.Logger;
 
 @DatabaseIdentityStoreDefinition(
     dataSourceLookup = "java:app/jdbc/itmd4515DS",
-    callerQuery = "SELECT password FROM users WHERE username = ?",
-    groupsQuery = "SELECT g.group_name FROM groups g, user_groups ug, users u WHERE u.username = ? AND u.id = ug.user_id AND g.id = ug.group_id",
+    callerQuery = "SELECT password FROM users WHERE username = ? AND is_active = true",
+    groupsQuery = "SELECT g.group_name FROM user_groups_table g JOIN user_groups ug ON g.id = ug.group_id JOIN users u ON u.id = ug.user_id WHERE u.username = ?",
     priority = 10
 )
 

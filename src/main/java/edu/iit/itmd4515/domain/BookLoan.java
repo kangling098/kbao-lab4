@@ -36,8 +36,8 @@ public class BookLoan {
     @Column(name = "borrower_email", length = 100)
     private String borrowerEmail;
     
-    @Size(max = 12, message = "Phone number must not exceed 12 characters")
-    @Column(name = "borrower_phone", length = 12)
+    @Size(max = 20, message = "Phone number must not exceed 20 characters")
+    @Column(name = "borrower_phone", length = 20)
     private String borrowerPhone;
     
     @DecimalMin(value = "0.0", message = "Fine amount must be non-negative")

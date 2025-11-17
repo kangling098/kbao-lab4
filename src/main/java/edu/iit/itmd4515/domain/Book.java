@@ -27,8 +27,8 @@ public class Book {
     private String author;
     
     @NotBlank(message = "ISBN is required")
-    @Pattern(regexp = "\\d{10,13}", message = "ISBN must be 10-13 digits")
-    @Column(nullable = false, unique = true, length = 13)
+    @Pattern(regexp = "^\\d{10}$|^\\d{13}$|^\\d{3}-\\d{1}-\\d{6}-\\d{2}-\\d{1}$|^\\d{3}-\\d{1}-\\d{3}-\\d{5}-\\d{1}$|^\\d{3}-\\d{3}-\\d{3}-\\d{3}-\\d{1}$", message = "ISBN must be valid format")
+    @Column(nullable = false, unique = true, length = 17)
     private String isbn;
     
     @PastOrPresent(message = "Publication date must be in the past or present")

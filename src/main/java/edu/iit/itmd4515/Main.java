@@ -65,6 +65,12 @@ public class Main {
         LibrarianService librarianService = new LibrarianService();
         librarianService.em = em;
         
+        UserService userService = new UserService();
+        userService.em = em;
+        
+        GroupService groupService = new GroupService();
+        groupService.em = em;
+        
         // Create database seeder and run it
         DatabaseSeedService seedService = new DatabaseSeedService();
         seedService.bookService = bookService;
@@ -73,6 +79,8 @@ public class Main {
         seedService.bookLoanService = bookLoanService;
         seedService.publisherService = publisherService;
         seedService.librarianService = librarianService;
+        seedService.userService = userService;
+        seedService.groupService = groupService;
         
         // Run database seeding
         seedService.seedDatabase();
