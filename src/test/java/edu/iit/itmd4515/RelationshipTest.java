@@ -98,26 +98,46 @@ public class RelationshipTest {
         eduPublisher.setActive(true);
         
         // Create books
+<<<<<<< HEAD
         Book book1 = new Book("Java Programming Fundamentals", "Dr. Alice Smith", "9780123456789");
+=======
+        Book book1 = new Book("Java Programming Fundamentals", "Dr. Alice Smith", "978-0-123456-78-9");
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         book1.setPublicationDate(LocalDate.of(2023, 6, 15));
         book1.setPageCount(450);
         book1.setPrice(59.99);
         book1.setIsAvailable(true);
+<<<<<<< HEAD
         techPublisher.addBook(book1);
         
         Book book2 = new Book("Database Design and Implementation", "Prof. Bob Wilson", "9780987654321");
+=======
+        book1.setPublisher(techPublisher);
+        
+        Book book2 = new Book("Database Design and Implementation", "Prof. Bob Wilson", "978-0-987654-32-1");
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         book2.setPublicationDate(LocalDate.of(2023, 3, 20));
         book2.setPageCount(380);
         book2.setPrice(54.99);
         book2.setIsAvailable(true);
+<<<<<<< HEAD
         techPublisher.addBook(book2);
         
         Book book3 = new Book("Web Development with Modern Frameworks", "Dr. Carol Davis", "9780567890123");
+=======
+        book2.setPublisher(techPublisher);
+        
+        Book book3 = new Book("Web Development with Modern Frameworks", "Dr. Carol Davis", "978-0-567890-12-3");
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         book3.setPublicationDate(LocalDate.of(2023, 9, 10));
         book3.setPageCount(520);
         book3.setPrice(69.99);
         book3.setIsAvailable(true);
+<<<<<<< HEAD
         eduPublisher.addBook(book3);
+=======
+        book3.setPublisher(eduPublisher);
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         
         tx.begin();
         em.persist(techPublisher);
@@ -154,25 +174,35 @@ public class RelationshipTest {
         // Test updating relationship
         tx.begin();
         Book bookToUpdate = em.find(Book.class, book3.getId());
+<<<<<<< HEAD
         Publisher originalPublisher = bookToUpdate.getPublisher(); // Keep reference to original publisher
         originalPublisher.removeBook(bookToUpdate); // Remove from original publisher first
         foundTechPublisher.addBook(bookToUpdate); // Add to new publisher (using helper method)
+=======
+        bookToUpdate.setPublisher(foundTechPublisher); // Move book3 to tech publisher
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         tx.commit();
         
         // Verify the relationship was updated
         em.clear();
         Book updatedBook = em.find(Book.class, book3.getId());
+<<<<<<< HEAD
         assertNotNull(updatedBook, "Book3 should still exist after publisher change");
         assertNotNull(updatedBook.getPublisher(), "Book3 should have a publisher after change");
+=======
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         assertEquals("Tech Books Publishing", updatedBook.getPublisher().getName(), 
                     "Book3 should now be published by Tech Books Publishing");
         
         Publisher updatedTechPublisher = em.find(Publisher.class, techPublisher.getId());
         assertEquals(3, updatedTechPublisher.getBooks().size(), "Tech publisher should now have 3 books");
         
+<<<<<<< HEAD
         Publisher originalPublisherUpdated = em.find(Publisher.class, eduPublisher.getId());
         assertEquals(0, originalPublisherUpdated.getBooks().size(), "Original publisher should have 0 books after transfer");
         
+=======
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         LOG.log(Level.INFO, "Book '{0}' is published by '{1}'", 
                 new Object[]{foundBook1.getTitle(), foundBook1.getPublisher().getName()});
         LOG.log(Level.INFO, "Publisher '{0}' has {1} books", 

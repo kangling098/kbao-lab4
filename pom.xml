@@ -68,15 +68,22 @@
             <version>8.0.1.Final</version>
         </dependency>
         
+<<<<<<< HEAD
         <!-- EJB Container for standalone execution - REMOVED per Lab9 requirements -->
         <!--
+=======
+        <!-- EJB Container for standalone execution -->
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         <dependency>
             <groupId>org.glassfish.main.extras</groupId>
             <artifactId>glassfish-embedded-all</artifactId>
             <version>7.0.18</version>
             <scope>compile</scope>
         </dependency>
+<<<<<<< HEAD
         -->
+=======
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     </dependencies>
     
     <build>

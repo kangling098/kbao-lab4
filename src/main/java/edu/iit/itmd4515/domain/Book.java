@@ -22,6 +22,7 @@ public class Book {
     @Column(nullable = false, length = 200)
     private String title;
     
+<<<<<<< HEAD
     @Size(max = 100, message = "Author must not exceed 100 characters")
     @Column(length = 100)
     private String author;
@@ -29,6 +30,16 @@ public class Book {
     @NotBlank(message = "ISBN is required")
     @Pattern(regexp = "^\\d{10}$|^\\d{13}$|^\\d{3}-\\d{1}-\\d{6}-\\d{2}-\\d{1}$|^\\d{3}-\\d{1}-\\d{3}-\\d{5}-\\d{1}$|^\\d{3}-\\d{3}-\\d{3}-\\d{3}-\\d{1}$", message = "ISBN must be valid format")
     @Column(nullable = false, unique = true, length = 17)
+=======
+    @NotBlank(message = "Author is required")
+    @Size(max = 100, message = "Author must not exceed 100 characters")
+    @Column(nullable = false, length = 100)
+    private String author;
+    
+    @NotBlank(message = "ISBN is required")
+    @Pattern(regexp = "\\d{10,13}", message = "ISBN must be 10-13 digits")
+    @Column(nullable = false, unique = true, length = 13)
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     private String isbn;
     
     @PastOrPresent(message = "Publication date must be in the past or present")
@@ -46,8 +57,14 @@ public class Book {
     
     @NotNull(message = "Availability status is required")
     @Column(name = "is_available", nullable = false)
+<<<<<<< HEAD
     private Boolean isAvailable;
     
+=======
+    private Boolean isAvailable = true;
+    
+    @Future(message = "Due date must be in the future")
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     @Column(name = "due_date")
     private LocalDate dueDate;
     
@@ -67,7 +84,10 @@ public class Book {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
+<<<<<<< HEAD
         this.isAvailable = true;
+=======
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     }
     
     // Helper methods for relationships
@@ -163,12 +183,15 @@ public class Book {
     }
     
     public void setPublisher(Publisher publisher) {
+<<<<<<< HEAD
         // Remove from old publisher
         if (this.publisher != null) {
             this.publisher.getBooks().remove(this);
         }
         
         // Set new publisher
+=======
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         this.publisher = publisher;
     }
     

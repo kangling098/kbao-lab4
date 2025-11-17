@@ -80,6 +80,7 @@ public class BookLoanService extends AbstractService<BookLoan> {
     }
     
     /**
+<<<<<<< HEAD
      * Find active loans by borrower name.
      * @param borrowerName the borrower name
      * @return list of active loans for the borrower
@@ -93,6 +94,8 @@ public class BookLoanService extends AbstractService<BookLoan> {
     }
     
     /**
+=======
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
      * Process a book return.
      * @param loanId the loan ID
      * @return the updated loan

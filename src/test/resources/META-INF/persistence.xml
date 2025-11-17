@@ -12,8 +12,11 @@
         <class>edu.iit.itmd4515.domain.Publisher</class>
         <class>edu.iit.itmd4515.domain.Library</class>
         <class>edu.iit.itmd4515.domain.BookLoan</class>
+<<<<<<< HEAD
         <class>edu.iit.itmd4515.domain.User</class>
         <class>edu.iit.itmd4515.domain.Group</class>
+=======
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/itmd4515?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true"/>

@@ -27,6 +27,7 @@ public class Borrower {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
     
+<<<<<<< HEAD
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     @Size(max = 100, message = "Email must not exceed 100 characters")
@@ -39,18 +40,40 @@ public class Borrower {
     @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;
     
+=======
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     @Past(message = "Birth date must be in the past")
     @Column(name = "birth_date")
     private LocalDate birthDate;
     
+<<<<<<< HEAD
+=======
+    @Email(message = "Email must be valid")
+    @Size(max = 100, message = "Email must not exceed 100 characters")
+    @Column(unique = true, length = 100)
+    private String email;
+    
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Phone number must be valid")
+    @Size(max = 20, message = "Phone number must not exceed 20 characters")
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+    
+    @NotBlank(message = "Address is required")
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     @Size(max = 200, message = "Address must not exceed 200 characters")
     @Column(length = 200)
     private String address;
     
+<<<<<<< HEAD
+=======
+    @NotBlank(message = "City is required")
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     @Size(max = 50, message = "City must not exceed 50 characters")
     @Column(length = 50)
     private String city;
     
+<<<<<<< HEAD
     @Size(max = 2, message = "State must be 2 characters")
     @Pattern(regexp = "^[A-Z]{2}$", message = "State must be 2 uppercase letters")
     @Column(length = 2)
@@ -67,6 +90,27 @@ public class Borrower {
     @OneToOne(mappedBy = "borrower", cascade = CascadeType.ALL, orphanRemoval = true)
     private User user;
     
+=======
+    @NotBlank(message = "State is required")
+    @Size(max = 50, message = "State must not exceed 50 characters")
+    @Column(length = 50)
+    private String state;
+    
+    @NotBlank(message = "ZIP code is required")
+    @Pattern(regexp = "^\\d{5}(-\\d{4})?$", message = "ZIP code must be valid")
+    @Column(name = "zip_code", length = 10)
+    private String zipCode;
+    
+    @NotNull(message = "Membership status is required")
+    @Column(name = "membership_active", nullable = false)
+    private Boolean membershipActive = true;
+    
+    @PastOrPresent(message = "Membership date must be in the past or present")
+    @Column(name = "membership_date")
+    private LocalDate membershipDate = LocalDate.now();
+    
+    // Relationships
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     @OneToMany(mappedBy = "borrower", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookLoan> bookLoans = new ArrayList<>();
     
@@ -96,6 +140,20 @@ public class Borrower {
         }
     }
     
+<<<<<<< HEAD
+=======
+    public int getActiveLoansCount() {
+        return (int) bookLoans.stream()
+                .filter(loan -> loan.getReturnDate() == null)
+                .count();
+    }
+    
+    public boolean hasOverdueBooks() {
+        return bookLoans.stream()
+                .anyMatch(BookLoan::isOverdue);
+    }
+    
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     // Getters and Setters
     public Long getId() {
         return id;
@@ -121,6 +179,21 @@ public class Borrower {
         this.lastName = lastName;
     }
     
+<<<<<<< HEAD
+=======
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+    
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+    
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+    
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     public String getEmail() {
         return email;
     }
@@ -137,6 +210,7 @@ public class Borrower {
         this.phoneNumber = phoneNumber;
     }
     
+<<<<<<< HEAD
     public LocalDate getBirthDate() {
         return birthDate;
     }
@@ -145,6 +219,8 @@ public class Borrower {
         this.birthDate = birthDate;
     }
     
+=======
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     public String getAddress() {
         return address;
     }
@@ -185,12 +261,21 @@ public class Borrower {
         this.membershipActive = membershipActive;
     }
     
+<<<<<<< HEAD
     public User getUser() {
         return user;
     }
     
     public void setUser(User user) {
         this.user = user;
+=======
+    public LocalDate getMembershipDate() {
+        return membershipDate;
+    }
+    
+    public void setMembershipDate(LocalDate membershipDate) {
+        this.membershipDate = membershipDate;
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     }
     
     public List<BookLoan> getBookLoans() {
@@ -201,11 +286,14 @@ public class Borrower {
         this.bookLoans = bookLoans;
     }
     
+<<<<<<< HEAD
     // Helper method to get full name
     public String getFullName() {
         return firstName + " " + lastName;
     }
     
+=======
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     // equals and hashCode based on email
     @Override
     public boolean equals(Object o) {
@@ -224,6 +312,7 @@ public class Borrower {
     public String toString() {
         return "Borrower{" +
                 "id=" + id +
+<<<<<<< HEAD
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
@@ -235,6 +324,15 @@ public class Borrower {
                 ", zipCode='" + zipCode + '\'' +
                 ", user=" + (user != null ? user.getUsername() : "null") +
                 ", bookLoans=" + bookLoans.size() +
+=======
+                ", name='" + getFullName() + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phoneNumber + '\'' +
+                ", city='" + city + '\'' +
+                ", membershipActive=" + membershipActive +
+                ", activeLoans=" + getActiveLoansCount() +
+                ", hasOverdue=" + hasOverdueBooks() +
+>>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
                 '}';
     }
 }
