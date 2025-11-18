@@ -80,22 +80,6 @@ public class BookLoanService extends AbstractService<BookLoan> {
     }
     
     /**
-<<<<<<< HEAD
-     * Find active loans by borrower name.
-     * @param borrowerName the borrower name
-     * @return list of active loans for the borrower
-     */
-    public List<BookLoan> findActiveLoansByUser(String borrowerName) {
-        LOG.log(Level.INFO, "Finding active loans by borrower name: {0}", borrowerName);
-        TypedQuery<BookLoan> query = em.createQuery(
-            "SELECT bl FROM BookLoan bl WHERE bl.borrowerName = :borrowerName AND bl.returnDate IS NULL", BookLoan.class);
-        query.setParameter("borrowerName", borrowerName);
-        return query.getResultList();
-    }
-    
-    /**
-=======
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
      * Process a book return.
      * @param loanId the loan ID
      * @return the updated loan

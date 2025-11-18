@@ -28,7 +28,7 @@
                 <div class="col-12">
                     <div class="card card-custom">
                         <div class="card-header">
-                            <h3 class="mb-0">All Books</h3>
+                            <h3 class="mb-0">All Books - Table View</h3>
                         </div>
                         <div class="card-body">
                             <h:form id="booksForm">
@@ -77,11 +77,51 @@
                                             </span>
                                         </h:column>
                                         
+                                        <h:column>
+                                            <f:facet name="header">Actions</f:facet>
+                                            <h:commandButton value="View" 
+                                                             action="#{bookController.viewBook(book.id)}"
+                                                             styleClass="btn btn-sm btn-outline-primary me-1"
+                                                             immediate="true"/>
+                                            <h:commandButton value="Edit" 
+                                                             action="#{bookController.editBook(book.id)}"
+                                                             styleClass="btn btn-sm btn-outline-secondary me-1"
+                                                             immediate="true"/>
+                                            <h:commandButton value="Delete" 
+                                                             action="#{bookController.deleteBook(book.id)}"
+                                                             styleClass="btn btn-sm btn-outline-danger"
+                                                             immediate="true"
+                                                             onclick="return confirm('Are you sure you want to delete this book?');"/>
+                                        </h:column>
+                                        
                                         <f:facet name="footer">
                                             Total Books: #{bookService.findAll().size()}
                                         </f:facet>
                                     </h:dataTable>
                                 </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- All Books Card View using Composite Component -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h3 class="mb-0">All Books - Card View</h3>
+                        </div>
+                        <div class="card-body">
+                            <h:form id="booksCardForm">
+                                <ui:include src="/resources/components/bookCard.xhtml">
+                                    <ui:param name="book" value="#{book}" />
+                                </ui:include>
+                                <ui:repeat value="#{bookService.findAll()}" var="book">
+                                    <ui:include src="/resources/components/bookCard.xhtml">
+                                        <ui:param name="book" value="#{book}" />
+                                    </ui:include>
+                                </ui:repeat>
                             </h:form>
                         </div>
                     </div>

@@ -40,15 +40,12 @@ public class DatabaseSeedService {
     @Inject
     public PublisherService publisherService;
     
-<<<<<<< HEAD
     @Inject
     public UserService userService;
     
     @Inject
     public GroupService groupService;
     
-=======
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     @PostConstruct
     public void seedDatabase() {
         LOG.info("Starting database seeding...");
@@ -74,23 +71,6 @@ public class DatabaseSeedService {
         LOG.info("Clearing existing data...");
         
         // Delete in reverse order to respect foreign key constraints
-<<<<<<< HEAD
-        // Clear security data first (many-to-many relationships)
-        List<User> users = userService.findAll();
-        for (User user : users) {
-            user.setGroups(null);
-            userService.update(user);
-        }
-        
-        List<Group> groups = groupService.findAll();
-        for (Group group : groups) {
-            group.setUsers(null);
-            groupService.update(group);
-        }
-        
-        // Clear business data
-=======
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         List<BookLoan> loans = bookLoanService.findAll();
         for (BookLoan loan : loans) {
             bookLoanService.delete(loan);
@@ -121,32 +101,18 @@ public class DatabaseSeedService {
             publisherService.delete(publisher);
         }
         
-<<<<<<< HEAD
-        // Clear security entities
-        for (User user : users) {
-            userService.delete(user);
-        }
-        
-        for (Group group : groups) {
-            groupService.delete(group);
-        }
-        
-=======
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
+
         LOG.info("Existing data cleared");
     }
     
     private void createSampleData() {
         LOG.info("Creating sample data...");
         
-<<<<<<< HEAD
         // Create Security Groups
         groupService.createDefaultGroups();
         
         LOG.info("Created default security groups successfully");
         
-=======
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         // Create Publishers
         Publisher techPublisher = new Publisher("Tech Books Publishing", "123 Tech Street", "San Francisco", "USA");
         techPublisher.setEmail("info@techbooks.com");
@@ -171,7 +137,6 @@ public class DatabaseSeedService {
         
         // Create Librarians
         Librarian headLibrarian = new Librarian("Sarah", "Johnson", "HEAD001", "Head Librarian", LocalDate.now().minusYears(5));
-<<<<<<< HEAD
         headLibrarian.setEmail("sarah.johnson@chicagolibrary.org");
         headLibrarian.setPhoneNumber("(312) 555-0199");
         headLibrarian.setLibrary(mainLibrary);
@@ -187,17 +152,6 @@ public class DatabaseSeedService {
         branchLibrarian.setEmployed(true);
         branchLibrarian.setSalary(48000.0);
         branchLibrarian.setDepartment("Reference");
-=======
-        headLibrarian.setLibrary(mainLibrary);
-        headLibrarian.setEmployed(true);
-        headLibrarian.setSalary(65000.0);
-        librarianService.create(headLibrarian);
-        
-        Librarian branchLibrarian = new Librarian("Michael", "Chen", "LIB002", "Reference Librarian", LocalDate.now().minusYears(2));
-        branchLibrarian.setLibrary(branchLibrary);
-        branchLibrarian.setEmployed(true);
-        branchLibrarian.setSalary(48000.0);
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         librarianService.create(branchLibrarian);
         
         // Create Books
@@ -253,12 +207,9 @@ public class DatabaseSeedService {
         parentBorrower.setMembershipActive(true);
         borrowerService.create(parentBorrower);
         
-<<<<<<< HEAD
         // Create Security Users and Groups
         createSecurityData(headLibrarian, branchLibrarian, studentBorrower, teacherBorrower, parentBorrower);
         
-=======
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         // Create Book Loans
         BookLoan loan1 = new BookLoan(LocalDate.now().minusDays(7), LocalDate.now().plusDays(7), studentBorrower);
         loan1.setBook(javaBook);
@@ -346,7 +297,6 @@ public class DatabaseSeedService {
         
         LOG.info("\n=== RELATIONSHIP DEMONSTRATION COMPLETE ===");
     }
-<<<<<<< HEAD
     
     private void createSecurityData(Librarian headLibrarian, Librarian branchLibrarian, 
                                    Borrower studentBorrower, Borrower teacherBorrower, Borrower parentBorrower) {
@@ -412,6 +362,4 @@ public class DatabaseSeedService {
         
         LOG.info("Security data created successfully");
     }
-=======
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
 }

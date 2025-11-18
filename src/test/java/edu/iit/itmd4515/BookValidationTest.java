@@ -1,6 +1,7 @@
 package edu.iit.itmd4515;
 
 import edu.iit.itmd4515.domain.Book;
+import edu.iit.itmd4515.domain.Publisher;
 import jakarta.validation.*;
 import org.junit.jupiter.api.*;
 import java.time.LocalDate;
@@ -35,7 +36,7 @@ public class BookValidationTest {
         book.setIsAvailable(true);
         
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
-        assertTrue(violations.isEmpty(), "Valid book should have no violations");
+        assertTrue(violations.isEmpty(), "Valid book should have no violations: " + violations);
     }
     
     @Test
@@ -152,25 +153,13 @@ public class BookValidationTest {
         
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertFalse(violations.isEmpty(), "Book with multiple errors should have violations");
-<<<<<<< HEAD
         assertTrue(violations.size() >= 5, "Should have at least 5 violations");
-        
-        // Check for specific violations
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("title")));
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("isbn")));
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("pageCount")));
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("price")));
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("isAvailable")));
-=======
-        assertTrue(violations.size() >= 6, "Should have at least 6 violations");
         
         // Check for specific violations
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("title")));
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("author")));
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("isbn")));
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("publisher")));
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("pageCount")));
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("price")));
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     }
 }

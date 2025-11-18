@@ -1,6 +1,7 @@
 package edu.iit.itmd4515;
 
 import edu.iit.itmd4515.domain.Book;
+import edu.iit.itmd4515.domain.Publisher;
 import jakarta.persistence.*;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,13 +52,19 @@ public class BookTest {
     public void testCreateBook() {
         LOG.info("Testing Create Book operation...");
         
+        // Create a publisher first
+        Publisher publisher = new Publisher("Prentice Hall " + System.currentTimeMillis(), "One Lake Street", "Upper Saddle River", "USA");
+        publisher.setActive(true);
+        
         Book book = new Book("Clean Code", "Robert C. Martin", "9780132350884");
         book.setPublicationDate(LocalDate.of(2008, 8, 1));
         book.setPageCount(464);
         book.setPrice(42.50);
         book.setIsAvailable(true);
+        book.setPublisher(publisher);
         
         tx.begin();
+        em.persist(publisher);
         em.persist(book);
         tx.commit();
         
@@ -69,6 +76,7 @@ public class BookTest {
         assertNotNull(foundBook, "Book should be found after creation");
         assertEquals("Clean Code", foundBook.getTitle(), "Book title should match");
         assertEquals("Robert C. Martin", foundBook.getAuthor(), "Book author should match");
+        assertNotNull(foundBook.getPublisher(), "Book should have a publisher");
     }
     
     @Test
@@ -76,13 +84,18 @@ public class BookTest {
     public void testReadBook() {
         LOG.info("Testing Read Book operation...");
         
-        // First create a book to read
+        // First create a publisher and book to read
+        Publisher publisher = new Publisher("Addison-Wesley Professional " + System.currentTimeMillis(), "75 Arlington St", "Boston", "USA");
+        publisher.setActive(true);
+        
         Book book = new Book("Design Patterns", "Gang of Four", "9780201633610");
         book.setPublicationDate(LocalDate.of(1994, 10, 31));
         book.setPageCount(395);
         book.setPrice(54.99);
+        book.setPublisher(publisher);
         
         tx.begin();
+        em.persist(publisher);
         em.persist(book);
         tx.commit();
         
@@ -96,6 +109,7 @@ public class BookTest {
         assertEquals("Design Patterns", foundBook.getTitle(), "Book title should match");
         assertEquals("Gang of Four", foundBook.getAuthor(), "Book author should match");
         assertEquals("9780201633610", foundBook.getIsbn(), "Book ISBN should match");
+        assertNotNull(foundBook.getPublisher(), "Book should have a publisher");
         
         LOG.log(Level.INFO, "Found book: {0}", foundBook);
     }
@@ -105,14 +119,19 @@ public class BookTest {
     public void testUpdateBook() {
         LOG.info("Testing Update Book operation...");
         
-        // Create a book first
+        // Create a publisher and book first
+        Publisher publisher = new Publisher("Addison-Wesley Professional " + (System.currentTimeMillis() + 1), "75 Arlington St", "Boston", "USA");
+        publisher.setActive(true);
+        
         Book book = new Book("Refactoring", "Martin Fowler", "9780201485677");
         book.setPublicationDate(LocalDate.of(1999, 7, 8));
         book.setPageCount(464);
         book.setPrice(44.99);
         book.setIsAvailable(true);
+        book.setPublisher(publisher);
         
         tx.begin();
+        em.persist(publisher);
         em.persist(book);
         tx.commit();
         
@@ -133,6 +152,7 @@ public class BookTest {
         assertEquals(49.99, updatedBook.getPrice(), 0.01, "Price should be updated");
         assertFalse(updatedBook.getIsAvailable(), "Availability should be updated to false");
         assertNotNull(updatedBook.getDueDate(), "Due date should be set");
+        assertNotNull(updatedBook.getPublisher(), "Book should have a publisher");
         
         LOG.log(Level.INFO, "Updated book: {0}", updatedBook);
     }
@@ -142,13 +162,18 @@ public class BookTest {
     public void testDeleteBook() {
         LOG.info("Testing Delete Book operation...");
         
-        // Create a book to delete
+        // Create a publisher and book to delete
+        Publisher publisher = new Publisher("Addison-Wesley Professional " + (System.currentTimeMillis() + 2), "75 Arlington St", "Boston", "USA");
+        publisher.setActive(true);
+        
         Book book = new Book("The Pragmatic Programmer", "Andrew Hunt", "9780201616224");
         book.setPublicationDate(LocalDate.of(1999, 10, 30));
         book.setPageCount(352);
         book.setPrice(42.95);
+        book.setPublisher(publisher);
         
         tx.begin();
+        em.persist(publisher);
         em.persist(book);
         tx.commit();
         
@@ -173,12 +198,22 @@ public class BookTest {
     public void testFindAllBooks() {
         LOG.info("Testing Find All Books operation...");
         
+        // Create a publisher
+        Publisher publisher = new Publisher("Test Publisher " + (System.currentTimeMillis() + 3), "123 Test St", "Test City", "USA");
+        publisher.setActive(true);
+        
         // Create some test books
         Book book1 = new Book("Book 1", "Author 1", "1111111111");
+        book1.setPublisher(publisher);
+        
         Book book2 = new Book("Book 2", "Author 2", "2222222222");
+        book2.setPublisher(publisher);
+        
         Book book3 = new Book("Book 3", "Author 3", "3333333333");
+        book3.setPublisher(publisher);
         
         tx.begin();
+        em.persist(publisher);
         em.persist(book1);
         em.persist(book2);
         em.persist(book3);
@@ -201,9 +236,14 @@ public class BookTest {
         LOG.info("Testing Find Book by ISBN operation...");
         
         String isbn = "1234567890";
+        Publisher publisher = new Publisher("Test Publisher " + (System.currentTimeMillis() + 4), "123 Test St", "Test City", "USA");
+        publisher.setActive(true);
+        
         Book book = new Book("Test Book", "Test Author", isbn);
+        book.setPublisher(publisher);
         
         tx.begin();
+        em.persist(publisher);
         em.persist(book);
         tx.commit();
         
@@ -213,8 +253,9 @@ public class BookTest {
         Book foundBook = query.getSingleResult();
         
         assertNotNull(foundBook, "Book should be found by ISBN");
-        assertEquals(isbn, foundBook.getIsbn(), "ISBN should match");
+        assertEquals(isbn, foundBook.getIsbn(), "ISBN should be match");
         assertEquals("Test Book", foundBook.getTitle(), "Title should match");
+        assertNotNull(foundBook.getPublisher(), "Book should have a publisher");
         
         LOG.log(Level.INFO, "Found book by ISBN: {0}", foundBook);
     }

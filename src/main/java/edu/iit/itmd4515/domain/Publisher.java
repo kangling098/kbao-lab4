@@ -77,24 +77,13 @@ public class Publisher {
     public void addBook(Book book) {
         if (!this.books.contains(book)) {
             this.books.add(book);
-<<<<<<< HEAD
-            // Set the publisher on the book side, but avoid infinite recursion
-            if (book.getPublisher() != this) {
-                book.setPublisher(this);
-            }
-=======
             book.setPublisher(this);
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         }
     }
     
     public void removeBook(Book book) {
         if (this.books.contains(book)) {
             this.books.remove(book);
-<<<<<<< HEAD
-            // Remove the publisher reference from the book
-=======
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
             book.setPublisher(null);
         }
     }

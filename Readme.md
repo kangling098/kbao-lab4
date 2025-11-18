@@ -1,29 +1,59 @@
-# Lab 7 - JSF Implementation
-kbao2 lab 7 README - JSF Web Application Implementation
+# Lab 10 - REST API Implementation
+kbao2 lab 10 README - REST Web Services Implementation
 
-## 🎯 Lab 7 Overview
+## 🎯 Lab 10 Overview
 
-This project has been enhanced from Lab 6 to implement **JSF (JavaServer Faces)** functionality as required by Lab 7. The implementation replaces previous Servlet/JSP work with modern JSF components:
+This project has been enhanced from Lab 7 to implement **REST (Representational State Transfer) API functionality** as required by Lab 10. The implementation provides comprehensive RESTful web services for the library management system:
 
-- ✅ **JSF Backing Bean** with @Named and @RequestScoped annotations
-- ✅ **JSF Form Page** with h:form, h:inputText, and h:commandButton
-- ✅ **JSF Confirmation Page** displaying saved entity fields
-- ✅ **Jakarta Bean Validation** integration with h:message tags
-- ✅ **Command Button Action Methods** invoking EJB services
-- ✅ **Complete Web Application** with WAR packaging
+- ✅ **Complete REST API** with /api base path for all endpoints
+- ✅ **Full CRUD Operations** for all 7 entities (Book, User, Borrower, BookLoan, Librarian, Library, Publisher)
+- ✅ **Security Integration** with role-based access control (ADMIN, LIBRARIAN, USER)
+- ✅ **Advanced Query Endpoints** for sophisticated data retrieval
+- ✅ **Proper Error Handling** with appropriate HTTP status codes
+- ✅ **Comprehensive Logging** for monitoring and debugging
 
 ## 📋 Business Domain Description
 
 I have chosen a **Library Management System** as my business domain for this semester project. This domain is particularly engaging because it involves real-world entities that most people can relate to - books, borrowers, librarians, and library operations. The library system provides a rich environment for learning JPA, EJB, and enterprise Java concepts while building something practical and useful.
 
-A library management system handles the core operations of tracking books, managing checkouts, handling member registrations, and maintaining inventory. This domain offers excellent opportunities to explore various JPA relationships and EJB service layer patterns including stateless session beans, dependency injection, and transaction management.
+A library management system handles the core operations of tracking books, managing checkouts, handling member registrations, and maintaining inventory. This domain offers excellent opportunities to explore various JPA relationships and EJB service layer patterns including stateless session beans, dependency injection, and transaction management. The REST API implementation allows for integration with various client applications including web frontends, mobile apps, and other services.
 
-## 🏗️ Lab 7 JSF Architecture
+## 🏗️ Lab 10 REST API Architecture
 
-### **JSF Web Application Design**
-The project now implements a complete JSF web application with the following components:
+### **REST Web Services Design**
+The project now implements a complete REST API with the following components:
 
-#### **BookController - JSF Backing Bean**
+#### **RestApplication - REST Configuration**
+```java
+@ApplicationPath("/api")
+public class RestApplication extends Application {
+    // All REST endpoints are accessible under the /api path
+}
+```
+
+#### **REST Resource Classes**
+- **BookResource**: Complete book management with search capabilities
+- **UserResource**: User account management with role-based access
+- **BorrowerResource**: Borrower registration and management
+- **BookLoanResource**: Loan processing and return functionality
+- **LibrarianResource**: Staff management and assignment
+- **LibraryResource**: Branch management and operations
+- **PublisherResource**: Publishing information management
+
+### **REST API Configuration**
+```xml
+<!-- JAX-RS API dependency -->
+<dependency>
+    <groupId>jakarta.ws.rs</groupId>
+    <artifactId>jakarta.ws.rs-api</artifactId>
+    <version>3.1.0</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+## ✅ Lab 7 JSF Implementation (Previous Work)
+
+### **1. BookController - JSF Backing Bean**
 ```java
 @Named("bookController")
 @RequestScoped
@@ -43,44 +73,6 @@ public class BookController {
     }
 }
 ```
-
-#### **JSF Pages**
-- **index.xhtml**: Form page with h:form, h:inputText, h:commandButton, h:message
-- **confirmation.xhtml**: Confirmation page displaying saved entity details
-
-### **JSF Configuration**
-```xml
-<!-- faces-config.xml -->
-<faces-config version="4.0">
-    <application>
-        <resource-bundle>
-            <base-name>messages</base-name>
-            <var>msg</var>
-        </resource-bundle>
-    </application>
-</faces-config>
-
-<!-- web.xml -->
-<servlet>
-    <servlet-name>Faces Servlet</servlet-name>
-    <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-    <servlet-name>Faces Servlet</servlet-name>
-    <url-pattern>*.xhtml</url-pattern>
-</servlet-mapping>
-```
-
-## ✅ Lab 6 Service Implementation
-
-### **1. AbstractService<T> - Generic Foundation**
-- **Purpose**: Provides common CRUD operations for all entities
-- **Features**: 
-  - Generic type parameter for type safety
-  - Standard CRUD operations (create, read, update, delete)
-  - Entity counting and listing
-  - Comprehensive logging
-  - Transaction management with @Transactional
 
 ### **2. BookService - Book Management**
 ```java
@@ -154,43 +146,157 @@ public class PublisherService extends AbstractService<Publisher> {
 }
 ```
 
-## 🚀 Lab 7 JSF Execution
+## 🔑 Lab 10 REST API Security Implementation
 
-### **JSF Form Demonstration**
-The JSF implementation provides a complete web interface for book creation:
+### **Role-Based Access Control**
+The REST API implements security with three distinct roles:
 
-1. **Access the form**: Navigate to `http://localhost:8080/itmd4515-fp-1.0-SNAPSHOT/`
-2. **Fill in book details**: Title, Author, ISBN, Publication Date, Page Count, Price
-3. **Submit the form**: Click "Create Book" button
-4. **View confirmation**: See the saved book details on confirmation page
-5. **Create another book**: Click "Create Another Book" to return to form
+- **ADMIN**: Full access to all operations including user management
+- **LIBRARIAN**: Access to book, borrower, and loan management operations
+- **USER**: Limited access for self-service operations
 
-### **JSF Features Demonstrated**
-- **Form Validation**: Real-time validation with h:message display
-- **Command Button**: h:commandButton invokes backing bean action
-- **Navigation**: Automatic navigation between pages
-- **Data Display**: h:outputText displays saved entity fields
-- **Styling**: Custom CSS for professional appearance
+#### **Security Annotations**
+```java
+@RolesAllowed("ADMIN")
+public class UserResource { ... }
 
-### **Sample Form Submission**
-```
-=== JSF FORM SUBMISSION ===
-✓ Book Created Successfully!
-Book ID: 1
-Title: Java Programming Fundamentals
-Author: Dr. Alice Smith
-ISBN: 9781234567890
-Publication Date: January 15, 2024
-Page Count: 450
-Price: $59.99
-Availability: Available
+@RolesAllowed({"ADMIN", "LIBRARIAN"})
+public Response createBook(Book book) { ... }
+
+@PermitAll
+public Response getBookById(@PathParam("id") Long id) { ... }
 ```
 
-### **How to Deploy and Run**
-1. **Build the WAR file**: `mvn clean compile war:war -Dmaven.test.skip=true`
-2. **Deploy to application server**: GlassFish, WildFly, etc.
-3. **Access the application**: `http://localhost:8080/itmd4515-fp-1.0-SNAPSHOT/`
-4. **Test the JSF functionality**: Create books through the web interface
+#### **Security Configuration**
+```java
+@DatabaseIdentityStoreDefinition(
+    dataSourceLookup = "java:app/jdbc/itmd4515DS",
+    callerQuery = "SELECT password FROM users WHERE username = ? AND is_active = true",
+    groupsQuery = "SELECT g.group_name FROM user_groups_table g JOIN user_groups ug ON g.id = ug.group_id JOIN users u ON u.id = ug.user_id WHERE u.username = ?",
+    priority = 10
+)
+@DeclareRoles({"ADMIN", "LIBRARIAN", "USER"})
+```
+
+## 🚀 Lab 10 REST API Endpoints
+
+### **REST API Structure**
+All endpoints are accessible under the `/api` base path:
+
+#### **Books Management** (`/api/books`)
+- `GET /api/books` - Get all books (public access)
+- `GET /api/books/{id}` - Get specific book (public access)
+- `POST /api/books` - Create new book (ADMIN/LIBRARIAN)
+- `PUT /api/books/{id}` - Update book (ADMIN/LIBRARIAN)
+- `DELETE /api/books/{id}` - Delete book (ADMIN/LIBRARIAN)
+- `GET /api/books/search/title/{title}` - Search by title (public access)
+- `GET /api/books/search/author/{author}` - Search by author (public access)
+- `GET /api/books/available` - Get available books (public access)
+
+#### **Users Management** (`/api/users`)
+- `GET /api/users` - Get all users (ADMIN)
+- `GET /api/users/{id}` - Get specific user (ADMIN)
+- `GET /api/users/username/{username}` - Get user by username (ADMIN)
+- `POST /api/users` - Create new user (ADMIN)
+- `PUT /api/users/{id}` - Update user (ADMIN)
+- `DELETE /api/users/{id}` - Delete user (ADMIN)
+
+#### **Borrowers Management** (`/api/borrowers`)
+- `GET /api/borrowers` - Get all borrowers (ADMIN/LIBRARIAN)
+- `GET /api/borrowers/{id}` - Get specific borrower (ADMIN/LIBRARIAN)
+- `POST /api/borrowers` - Create new borrower (ADMIN/LIBRARIAN)
+- `PUT /api/borrowers/{id}` - Update borrower (ADMIN/LIBRARIAN)
+- `DELETE /api/borrowers/{id}` - Delete borrower (ADMIN/LIBRARIAN)
+- `GET /api/borrowers/search/lastName/{lastName}` - Search by last name (ADMIN/LIBRARIAN)
+- `GET /api/borrowers/search/email/{email}` - Search by email (ADMIN/LIBRARIAN)
+- `GET /api/borrowers/active` - Get active borrowers (ADMIN/LIBRARIAN)
+- `GET /api/borrowers/overdue` - Get borrowers with overdue books (ADMIN/LIBRARIAN)
+
+#### **Book Loans Management** (`/api/loans`)
+- `GET /api/loans` - Get all loans (ADMIN/LIBRARIAN)
+- `GET /api/loans/{id}` - Get specific loan (ADMIN/LIBRARIAN)
+- `POST /api/loans` - Create new loan (ADMIN/LIBRARIAN)
+- `PUT /api/loans/{id}` - Update loan (ADMIN/LIBRARIAN)
+- `PUT /api/loans/{id}/return` - Return book (ADMIN/LIBRARIAN)
+- `DELETE /api/loans/{id}` - Delete loan (ADMIN/LIBRARIAN)
+- `GET /api/loans/active` - Get active loans (ADMIN/LIBRARIAN)
+- `GET /api/loans/overdue` - Get overdue loans (ADMIN/LIBRARIAN)
+- `GET /api/loans/borrower/{borrowerId}` - Get loans by borrower (ADMIN/LIBRARIAN)
+- `GET /api/loans/book/{bookId}` - Get loans by book (ADMIN/LIBRARIAN)
+- `GET /api/loans/library/{libraryId}` - Get loans by library (ADMIN/LIBRARIAN)
+
+#### **Librarians Management** (`/api/librarians`)
+- `GET /api/librarians` - Get all librarians (ADMIN)
+- `GET /api/librarians/{id}` - Get specific librarian (ADMIN/LIBRARIAN)
+- `POST /api/librarians` - Create new librarian (ADMIN)
+- `PUT /api/librarians/{id}` - Update librarian (ADMIN)
+- `DELETE /api/librarians/{id}` - Delete librarian (ADMIN)
+- `GET /api/librarians/search/lastName/{lastName}` - Search by last name (ADMIN/LIBRARIAN)
+- `GET /api/librarians/search/employeeId/{employeeId}` - Search by employee ID (ADMIN/LIBRARIAN)
+- `GET /api/librarians/active` - Get active librarians (ADMIN/LIBRARIAN)
+- `GET /api/librarians/library/{libraryId}` - Get librarians by library (ADMIN/LIBRARIAN)
+
+#### **Libraries Management** (`/api/libraries`)
+- `GET /api/libraries` - Get all libraries (ADMIN)
+- `GET /api/libraries/{id}` - Get specific library (ADMIN/LIBRARIAN)
+- `POST /api/libraries` - Create new library (ADMIN)
+- `PUT /api/libraries/{id}` - Update library (ADMIN)
+- `DELETE /api/libraries/{id}` - Delete library (ADMIN)
+- `GET /api/libraries/search/name/{name}` - Search by name (ADMIN/LIBRARIAN)
+- `GET /api/libraries/search/city/{city}` - Search by city (ADMIN/LIBRARIAN)
+- `GET /api/libraries/search/state/{state}` - Search by state (ADMIN/LIBRARIAN)
+
+#### **Publishers Management** (`/api/publishers`)
+- `GET /api/publishers` - Get all publishers (public access)
+- `GET /api/publishers/{id}` - Get specific publisher (public access)
+- `POST /api/publishers` - Create new publisher (ADMIN/LIBRARIAN)
+- `PUT /api/publishers/{id}` - Update publisher (ADMIN/LIBRARIAN)
+- `DELETE /api/publishers/{id}` - Delete publisher (ADMIN/LIBRARIAN)
+- `GET /api/publishers/search/name/{name}` - Search by name (public access)
+- `GET /api/publishers/search/city/{city}` - Search by city (public access)
+- `GET /api/publishers/search/country/{country}` - Search by country (public access)
+
+### **Sample API Request**
+```
+=== REST API REQUEST ===
+POST /api/books
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "title": "Java RESTful Web Services",
+  "author": "John Smith",
+  "isbn": "9781234567890",
+  "publicationDate": "2024-01-15",
+  "pageCount": 450,
+  "price": 49.99,
+  "isAvailable": true
+}
+
+=== REST API RESPONSE ===
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+  "id": 1,
+  "title": "Java RESTful Web Services",
+  "author": "John Smith",
+  "isbn": "9781234567890",
+  "publicationDate": "2024-01-15",
+  "pageCount": 450,
+  "price": 49.99,
+  "isAvailable": true,
+  "dueDate": null,
+  "publisher": null,
+  "bookLoans": []
+}
+```
+
+### **Error Handling**
+- **404 Not Found**: Resource does not exist
+- **403 Forbidden**: Insufficient permissions
+- **500 Internal Server Error**: Server-side error with detailed message
+- **Proper Error Messages**: Descriptive error responses for debugging
 
 ## 🧪 Test Results
 
@@ -251,33 +357,19 @@ public void returnBook() {
 
 ## 🔧 Technical Configuration
 
-### **JSF Configuration**
+### **REST API Configuration**
 ```xml
-<!-- faces-config.xml -->
-<faces-config version="4.0">
-    <application>
-        <resource-bundle>
-            <base-name>messages</base-name>
-            <var>msg</var>
-        </resource-bundle>
-    </application>
-</faces-config>
-
-<!-- web.xml -->
-<servlet>
-    <servlet-name>Faces Servlet</servlet-name>
-    <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-</servlet>
-<servlet-mapping>
-    <servlet-name>Faces Servlet</servlet-name>
-    <url-pattern>*.xhtml</url-pattern>
-</servlet-mapping>
+<!-- JAX-RS API dependency -->
+<dependency>
+    <groupId>jakarta.ws.rs</groupId>
+    <artifactId>jakarta.ws.rs-api</artifactId>
+    <version>3.1.0</version>
+    <scope>provided</scope>
+</dependency>
 ```
 
-### **Maven Dependencies for JSF**
+### **Maven Dependencies for REST**
 ```xml
-<!-- WAR Plugin for JSF deployment -->
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-war-plugin</artifactId>
@@ -289,54 +381,44 @@ public void returnBook() {
 </plugin>
 ```
 
-### **JSF Annotations Used**
-- **@Named**: Marks backing bean for JSF EL expression access
-- **@RequestScoped**: Defines bean lifecycle as request scope
-- **@EJB**: Enables EJB dependency injection in backing bean
-- **@PostConstruct**: Initializes backing bean after construction
+### **REST Annotations Used**
+- **@ApplicationPath**: Defines the base URL for all REST endpoints
+- **@Path**: Defines resource paths for each endpoint
+- **@GET/@POST/@PUT/@DELETE**: HTTP method annotations
+- **@Produces/@Consumes**: Defines content types (JSON)
+- **@RolesAllowed/@PermitAll**: Security role annotations
 
-### **JSF Components Used**
-- **h:form**: JSF form component with automatic CSRF protection
-- **h:inputText**: Input field with validation integration
-- **h:commandButton**: Action button invoking backing bean methods
-- **h:message**: Validation error message display
-- **h:outputText**: Data display with formatting support
-- **f:validateRegex**: Regular expression validation
-- **f:convertDateTime**: Date formatting and conversion
-
-## ✅ Lab 7 Requirements Fulfillment
+## ✅ Lab 10 Requirements Fulfillment
 
 ### **Core Requirements:**
-- ✅ **Replace Servlet/JSP functionality**: All previous servlet/JSP code removed
-- ✅ **JSF Backing Bean**: BookController with @Named and @RequestScoped annotations
-- ✅ **JSF Form Page**: index.xhtml with h:form, h:inputText, h:commandButton
-- ✅ **JSF Confirmation Page**: confirmation.xhtml displaying saved entity fields
-- ✅ **Command Button Action**: h:commandButton invokes createBook() action method
-- ✅ **h:message Tags**: Validation error display with Jakarta Bean Validation
-- ✅ **EJB Integration**: Backing bean uses EJB services for persistence
-- ✅ **Entity Creation**: Complete book creation through JSF interface
-- ✅ **Form Validation**: Client and server-side validation with proper feedback
+- ✅ **Complete REST API**: All entities have full CRUD operations exposed via REST
+- ✅ **Resource Classes**: One resource class per entity (7 total)
+- ✅ **JAX-RS Implementation**: Using Jakarta EE JAX-RS API
+- ✅ **Security Integration**: Role-based access control properly implemented
+- ✅ **HTTP Methods**: Proper use of GET, POST, PUT, DELETE for CRUD operations
+- ✅ **Proper Status Codes**: Correct HTTP status codes for all responses
+- ✅ **Error Handling**: Comprehensive error handling with meaningful messages
 
-### **Additional JSF Features:**
-- ✅ **Navigation Management**: Proper JSF navigation with faces-redirect
-- ✅ **Styling**: Professional CSS styling for modern appearance
-- ✅ **Responsive Design**: Clean, user-friendly interface
-- ✅ **Validation Integration**: Jakarta Bean Validation with JSF messages
-- ✅ **Data Conversion**: Proper date and number formatting
-- ✅ **WAR Packaging**: Complete web application packaging
+### **Advanced Features:**
+- ✅ **Query Endpoints**: Advanced search functionality for each entity
+- ✅ **Security Roles**: Implementation of ADMIN, LIBRARIAN, USER roles
+- ✅ **REST Best Practices**: Following REST architectural principles
+- ✅ **API Documentation**: Comprehensive endpoint documentation
+- ✅ **Logging**: Proper logging for monitoring and debugging
+- ✅ **Input Validation**: Integration with existing validation constraints
 
 ## 🏆 Conclusion
 
-Lab 7 successfully implements a comprehensive **JSF Web Application** that replaces previous Servlet/JSP functionality with modern JavaServer Faces technology. The implementation demonstrates:
+Lab 10 successfully implements a comprehensive **REST API** that extends the existing JSF web application with modern web services. The implementation demonstrates:
 
-- **Component-Based Web Development**: Proper use of JSF UI components and backing beans
-- **MVC Architecture**: Clear separation between view (XHTML), controller (backing bean), and model (EJB services)
-- **Form Validation**: Integration of Jakarta Bean Validation with JSF error messaging
-- **Navigation Management**: Proper JSF navigation patterns with faces-redirect
-- **Professional UI**: Clean, styled web interface with responsive design
+- **REST Architecture**: Proper implementation of RESTful principles with clear resource identification
+- **Security Integration**: Jakarta EE security framework integrated with REST endpoints
+- **Scalability**: API design allows for integration with multiple client types
+- **Error Handling**: Robust error handling with appropriate HTTP status codes
 - **Enterprise Integration**: Seamless integration with existing EJB service layer
+- **Performance**: Efficient queries leveraging existing EJB service layer
 
-The JSF implementation provides a solid foundation for building modern enterprise web applications with proper validation, error handling, and user experience.
+The REST API provides a solid foundation for building modern client applications, including web frontends, mobile apps, and third-party integrations, while maintaining the existing JSF functionality for traditional web access.
 
 ## 🛠️ Build and Run Instructions
 
@@ -364,6 +446,12 @@ mvn clean compile war:war -Dmaven.test.skip=true
 2. **Deploy to server**: Use application server admin console or deployment tools
 3. **Start server**: Ensure MySQL is running and application server is started
 
+### **Access REST API**
+- **Base URL**: `http://localhost:8080/itmd4515-fp-1.0-SNAPSHOT/api`
+- **Books Endpoint**: `http://localhost:8080/itmd4515-fp-1.0-SNAPSHOT/api/books`
+- **Users Endpoint**: `http://localhost:8080/itmd4515-fp-1.0-SNAPSHOT/api/users`
+- **Borrowers Endpoint**: `http://localhost:8080/itmd4515-fp-1.0-SNAPSHOT/api/borrowers`
+
 ### **Access JSF Application**
 - **Form Page**: `http://localhost:8080/itmd4515-fp-1.0-SNAPSHOT/`
 - **Create Book**: Fill form and submit
@@ -373,8 +461,8 @@ mvn clean compile war:war -Dmaven.test.skip=true
 ## 📁 Project Structure
 
 ```
-kbao2-lab7/
-├── pom.xml                           # Maven configuration with JSF dependencies
+kbao2-lab10/
+├── pom.xml                           # Maven configuration with REST dependencies
 ├── README.md                         # This documentation
 ├── src/
 │   ├── main/
@@ -389,7 +477,18 @@ kbao2-lab7/
 │   │   │   │   ├── Librarian.java
 │   │   │   │   ├── Publisher.java
 │   │   │   │   ├── Library.java
-│   │   │   │   └── BookLoan.java
+│   │   │   │   ├── BookLoan.java
+│   │   │   │   ├── User.java
+│   │   │   │   └── Group.java
+│   │   │   ├── rest/                 # REST resource classes
+│   │   │   │   ├── RestApplication.java
+│   │   │   │   ├── BookResource.java
+│   │   │   │   ├── UserResource.java
+│   │   │   │   ├── BorrowerResource.java
+│   │   │   │   ├── BookLoanResource.java
+│   │   │   │   ├── LibrarianResource.java
+│   │   │   │   ├── LibraryResource.java
+│   │   │   │   └── PublisherResource.java
 │   │   │   └── service/              # EJB service layer
 │   │   │       ├── AbstractService.java
 │   │   │       ├── BookService.java
@@ -398,6 +497,8 @@ kbao2-lab7/
 │   │   │       ├── LibraryService.java
 │   │   │       ├── BookLoanService.java
 │   │   │       ├── PublisherService.java
+│   │   │       ├── UserService.java
+│   │   │       ├── GroupService.java
 │   │   │       └── DatabaseSeedService.java
 │   │   ├── resources/META-INF/
 │   │   │   ├── persistence.xml       # JPA configuration

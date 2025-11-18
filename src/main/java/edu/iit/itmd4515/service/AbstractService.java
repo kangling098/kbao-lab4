@@ -16,11 +16,7 @@ public abstract class AbstractService<T> {
     
     private static final Logger LOG = Logger.getLogger(AbstractService.class.getName());
     
-<<<<<<< HEAD
     @PersistenceContext(unitName = "itmd4515PU")
-=======
-    @PersistenceContext
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
     public EntityManager em;
     
     private final Class<T> entityClass;

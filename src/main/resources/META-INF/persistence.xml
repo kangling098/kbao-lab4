@@ -14,11 +14,8 @@
         <class>edu.iit.itmd4515.domain.Publisher</class>
         <class>edu.iit.itmd4515.domain.Library</class>
         <class>edu.iit.itmd4515.domain.BookLoan</class>
-<<<<<<< HEAD
         <class>edu.iit.itmd4515.domain.User</class>
         <class>edu.iit.itmd4515.domain.Group</class>
-=======
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         <properties>
             <!-- EclipseLink properties -->
             <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
@@ -37,11 +34,8 @@
         <class>edu.iit.itmd4515.domain.Publisher</class>
         <class>edu.iit.itmd4515.domain.Library</class>
         <class>edu.iit.itmd4515.domain.BookLoan</class>
-<<<<<<< HEAD
         <class>edu.iit.itmd4515.domain.User</class>
         <class>edu.iit.itmd4515.domain.Group</class>
-=======
->>>>>>> 967182f8513ce6efcafc871e8e037746cd98c5b9
         <properties>
             <!-- Database connection properties -->
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
